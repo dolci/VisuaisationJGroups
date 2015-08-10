@@ -16,11 +16,15 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 
 
+
+
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 
 import visualisationjgroups.config.DomainAndPersistenceConfig;
+import visualisationjgroups.domain.MbeanShow;
 import visualisationjgroups.metier.IVisualisationService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -31,19 +35,18 @@ public class TestGetAllMbeans {
 	private IVisualisationService service;
 	
 	@Test
-	public void test()
+	public void test() throws Exception
 	{
 	  
-		System.out.println("---- Mbeans  -----");
-	    //service.getAllMBean("879244", "localhost");
+		
 	    Gson gson = new GsonBuilder().create();
-	    TreeMap<String, Object> map = service.getAllMBean("879244", "localhost");
-	    for(String key: map.keySet()){
-	    	System.out.println(" ***        "+key+"       ***");
-		  String myCustomArray = gson.toJson(map.get(key));
-		  System.out.println(myCustomArray+"\n\n");
-		  service.scheduledHistory();
-		}
+	//   MbeanShow map = service.getAllMBean("lon1", "192.168.1.4");
+	   
+	    	//System.out.println(" ***        "+key+"       ***");
+		 // String myCustomArray = gson.toJson(key);
+		//  System.out.println(gson.toJson(map)+"\n\n");
+		//  service.scheduledHistory();
+	    
 	}
 
 }

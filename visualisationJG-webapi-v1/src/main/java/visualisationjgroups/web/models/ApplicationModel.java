@@ -21,9 +21,22 @@ import org.springframework.stereotype.Component;
 
 
 
+
+
+
+
+
+
+
+
 import com.google.common.collect.Lists;
 
 import visualisationjgroups.web.helpers.Static;
+import visualisationjgroups.domain.GrapheChangement;
+import visualisationjgroups.domain.GrapheProbe;
+import visualisationjgroups.domain.MBean;
+import visualisationjgroups.domain.MbeanShow;
+import visualisationjgroups.domain.Menu;
 import visualisationjgroups.domain.Node;
 import visualisationjgroups.entities.Changement;
 import visualisationjgroups.entities.Graphe;
@@ -45,17 +58,17 @@ public class ApplicationModel  implements IVisualisationService{
 	@Autowired
 	private IVisualisationService service;
 	
-	private TreeMap<String, ArrayList>  graph;
+	private GrapheProbe  graph;
 	private ArrayList <Node> members;
-	private TreeMap<String, ArrayList<String>> menu;
+	private ArrayList<Menu> menu;
 	private List<String> messages;
 	//private TreeMap<String, Object> mbeans;
 	// données de configuration
 	private boolean CORSneeded = true;
 
-	@PostConstruct
+	/*@PostConstruct
 	public void init() {
-		// on récupère les médecins et les clients
+		
 		try {
 			members =service.getAllMembers();
 			graph = service.createGraph(members);
@@ -64,7 +77,7 @@ public class ApplicationModel  implements IVisualisationService{
 		} catch (Exception ex) {
 			messages = Static.getErreursForException(ex);
 		}
-	}
+	}*/
 
 	// getter
 	public List<String> getMessages() {
@@ -95,13 +108,13 @@ public class ApplicationModel  implements IVisualisationService{
 	@Override
 	public ArrayList<Node> getAllMembers() {
 		
-		return members;
+		return service.getAllMembers();
 	}
 
 	@Override
-	public TreeMap<String, ArrayList> createGraph(ArrayList<Node> members) {
+	public GrapheProbe createGraph(ArrayList<Node> members) {
 		
-		return graph;
+		return service.createGraph(members);
 	}
 
 	@Override
@@ -111,9 +124,9 @@ public class ApplicationModel  implements IVisualisationService{
 	}
 
 	@Override
-	public TreeMap<String, ArrayList<String>> getMenu(ArrayList<Node> nodess) {
+	public ArrayList<Menu> getMenu(ArrayList<Node> nodess) {
 		
-		return menu;
+		return service.getMenu(nodess);
 	}
 
 	@Override
@@ -156,16 +169,16 @@ public class ApplicationModel  implements IVisualisationService{
 	}
 
 	@Override
-	  @Scheduled(fixedDelay = 6000)
-	public void scheduledHistory() {
+	  @Scheduled(fixedDelay = 8000)
+	public void scheduledHistory() throws Exception {
 		service.scheduledHistory();
 		
 	}
 
 	@Override
-	public TreeMap<String, Object> getAllMBean(String uuid, String addr) {
+	public MbeanShow getAllMBeanShow(String uuid, String addr) {
 		
-		return service.getAllMBean(uuid, addr);
+		return service.getAllMBeanShow(uuid, addr);
 	}
 
 	@Override
@@ -253,10 +266,16 @@ public class ApplicationModel  implements IVisualisationService{
 	}
 
 	@Override
-	public TreeMap<String, Object> getGrapheAtDateWithAllChange(
+	public GrapheChangement getGrapheAtDateWithAllChange(
 			Date dateFrom, Date dateTo, String heureFrom, String heureTo) {
 		
 		return service.getGrapheAtDateWithAllChange(dateFrom, dateTo, heureFrom, heureTo);
+	}
+
+	@Override
+	public String getChangeGrapheNotify() {
+		
+		return service.getChangeGrapheNotify();
 	}
 
 	

@@ -1,0 +1,9 @@
+<li class="parent_li">
+<span ng-click="nodeClicked(node)">
+             
+         </span> 
+         <span class="leaf"  ng-click="nodeClicked(node)"  >{{node.name}}
+            <i class="{{ switcher(isLeaf(node),'','icon-minus-sign' )}}"></i>
+              {{showNode(node)}}
+         </span>
+</li>

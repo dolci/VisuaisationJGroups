@@ -20,7 +20,7 @@ public class VisualisationJGroupsCorsController {
 			// fixed header CORS
 			response.addHeader("Access-Control-Allow-Origin", "*");
 			//  Authorize somr  headers
-			response.addHeader("Access-Control-Allow-Headers", "accept, authorization, content-type");
+			response.addHeader("Access-Control-Allow-Headers", "accept,  content-type");
 			// authorized POST
 			response.addHeader("Access-Control-Allow-Methods", "POST");
 		}
@@ -31,6 +31,7 @@ public class VisualisationJGroupsCorsController {
 		public void getCoord(HttpServletResponse response) {
 			sendOptions(response);
 		}
+		
 	// graph
 	@RequestMapping(value = "/getGraph", method = RequestMethod.OPTIONS)
 	public void getGraph(HttpServletResponse response) {
@@ -44,7 +45,7 @@ public class VisualisationJGroupsCorsController {
 	}
 
 	// mbeans 
-	@RequestMapping(value = "/getMbean/{uuid}/{addr}", method = RequestMethod.OPTIONS)
+	@RequestMapping(value = "/getMbean/{uuid}/{addr}/", method = RequestMethod.OPTIONS)
 	public void getMbeans(HttpServletResponse response) {
 		sendOptions(response);
 	}

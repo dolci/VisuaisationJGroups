@@ -21,13 +21,19 @@ import org.springframework.stereotype.Service;
 
 import com.google.common.collect.Lists;
 
+import visualisationjgroups.domain.Change;
 import visualisationjgroups.domain.Color;
 
 
 
 
+import visualisationjgroups.domain.GrapheChangement;
+import visualisationjgroups.domain.GrapheProbe;
 import visualisationjgroups.domain.HelperStructure;
 import visualisationjgroups.domain.Link;
+import visualisationjgroups.domain.MBean;
+import visualisationjgroups.domain.MbeanShow;
+import visualisationjgroups.domain.Menu;
 import visualisationjgroups.domain.Node;
 import visualisationjgroups.domain.Probe;
 import visualisationjgroups.entities.Member;
@@ -41,22 +47,24 @@ import visualisationjgroups.repositories.MemberRepository;
 import visualisationjgroups.repositories.ChangementRepository;
 
 @Service("metier")
-public class VisualisationService implements IVisualisationService{
+public class VisualisationService  implements IVisualisationService{
 
 		// repositories
 		@Autowired
-		private GrapheRepository grapheRepository;
-		@Autowired
-		private JmxPortRepository jmxPortRepository;
+		private
+		GrapheRepository grapheRepository;
+		@Autowired 
+		JmxPortRepository jmxPortRepository;
 		@Autowired
 		private MemberRepository memberRepository;
 		@Autowired
 		private ChangementRepository changementRepository;
-		 @Autowired
-		  private Environment environment;
+		/* @Autowired
+		  private Environment environment;*/
 		
-		
-	
+		private String changeGraphe;
+		 
+	    
 		public JmxPort getJmxPortById(String id) {
 			return jmxPortRepository.findOne(id);
 		}
@@ -112,8 +120,8 @@ public class VisualisationService implements IVisualisationService{
 		/**
 		 * 
 		 */
-		public TreeMap<String, ArrayList> createGraph(ArrayList<Node> members) {
-			TreeMap <String, ArrayList> graph = new TreeMap<String, ArrayList>(); 
+		public GrapheProbe createGraph(ArrayList<Node> members) {
+			
 			TreeMap<String,String> colorList = new TreeMap<String,String>();
 			int index = 0, size1 = members.size();
 			//color group
@@ -143,6 +151,7 @@ public class VisualisationService implements IVisualisationService{
 			ArrayList <Link> links = new ArrayList<Link>();			
 			int size = members.size();
 		    for(int i = 0;i<size ;i++){
+		    	if(members.get(i).getCoordinateur().equals("true")){
 			    int sizeView = members.get(i).getView().size();
 			    ArrayList<String> views = members.get(i).getView();
 				for(int j=0; j<sizeView;j++){
@@ -156,10 +165,13 @@ public class VisualisationService implements IVisualisationService{
 					    	 }
 						}
 					}
+				}
 				
 			}
-		    graph.put("nodes", members);graph.put("links",links);
-			return graph;
+		    GrapheProbe graphe = new GrapheProbe();
+		    graphe.setListNode(members);
+		   graphe.setListLink(links);
+			return graphe;
 		}
 		
 		@Override
@@ -182,21 +194,35 @@ public class VisualisationService implements IVisualisationService{
 		/**
 		 * 
 		 */
-		public TreeMap<String, ArrayList<String>> getMenu(ArrayList<Node> nodess) {
-			TreeMap<String,ArrayList<String>> menu = new TreeMap<String,ArrayList<String>>();
+		public ArrayList<Menu> getMenu(ArrayList<Node> nodess) {
 			
+			ArrayList<String> listItem = new ArrayList<String>();
+			ArrayList<Menu> listMenu = new ArrayList<Menu>();
+			Menu m  = new Menu();
 			if(nodess.size()>0){
-			nodess.get(0).getView().add(nodess.get(0).getLogical_name());
-			menu.put(nodess.get(0).getMcast_addr()+":"+nodess.get(0).getMcast_port(), nodess.get(0).getView());
+				m.setLabel(nodess.get(0).getMcast_addr()+":"+nodess.get(0).getMcast_port());
+				listItem.add(nodess.get(0).getLogical_name());
+				m.setItems(listItem);
+				listMenu.add(m);
+			
 			for(int i = 1 ; i<nodess.size() ;i++){
-				
-				if (! menu.containsKey(nodess.get(i).getMcast_addr()+":"+nodess.get(i).getMcast_port())){
-				nodess.get(i).getView().add(nodess.get(i).getLogical_name());
-				menu.put(nodess.get(i).getMcast_addr()+":"+nodess.get(i).getMcast_port(), nodess.get(i).getView());
+				int index = HelperStructure.existElemDansList(listMenu,nodess.get(i).getMcast_addr()+":"+nodess.get(i).getMcast_port());
+				if (index == -1){
+					Menu m1  = new Menu();m1.setLabel(nodess.get(i).getMcast_addr()+":"+nodess.get(i).getMcast_port());
+					ArrayList<String> listItem1 = new ArrayList<String>();
+					listItem1.add(nodess.get(i).getLogical_name());
+					m1.setItems(listItem1);
+					listMenu.add(m1);
 				}
+				else{
+					listMenu.get(index).getItems().add(nodess.get(i).getLogical_name());
+				}
+				
 			}
 			}
-			return menu;
+			
+			
+			return listMenu;
 		}
 		
 		@Override
@@ -380,23 +406,29 @@ public class VisualisationService implements IVisualisationService{
 		/**
 		 *  get all mbea relatif of member 
 		 */
-		public TreeMap<String, Object> getAllMBean(String logicalName,String addr) {
+		public MbeanShow getAllMBeanShow(String logicalName,String addr) {
 			 MBeanServerConnection server = null;
 			 JMXConnector conn;
 			 JMXServiceURL jmxservice; 
 			 JmxPort jmxPort;
+			
 			int port = 50000 /*Integer.parseInt(environment.getRequiredProperty("jmx.port"))*/,rep = 0;
 			
 			if (getJmxPortById(logicalName) == null){
 				// determined port 
 				 while(rep == 0){		 
+					 
 				         try {
+				        	 //System.out.println("************************** "+addr);
 					              jmxservice = new JMXServiceURL("service:jmx:rmi:///jndi/rmi://"+addr+":"+port+"/jmxrmi");			    
 					              conn = JMXConnectorFactory.connect(jmxservice);		
 					              server = conn.getMBeanServerConnection();
-					              rep=1;
-					              jmxPort =(JmxPort) new JmxPort().build(logicalName,0);jmxPort.setAddr(addr);jmxPort.setPort(port);
-								  addJmxPort(jmxPort);	
+					              if(HelperStructure.verifMBeanLogiclName(server,logicalName) == 1){
+					                rep=1;
+					                jmxPort =(JmxPort) new JmxPort().build(logicalName,0);jmxPort.setAddr(addr);jmxPort.setPort(port);
+								    addJmxPort(jmxPort);
+								   
+								  }
 				             } 	    
 				      catch ( Exception t) {	/*t.printStackTrace();*/}
 				      port++;
@@ -405,12 +437,12 @@ public class VisualisationService implements IVisualisationService{
 			}
 			else{
 				  jmxPort = getJmxPortById(logicalName);
-				  System.out.println("jmpor************************** "+jmxPort);
+				 // System.out.println("jmpor************************** "+jmxPort);
 				   try {
 		              jmxservice = new JMXServiceURL("service:jmx:rmi:///jndi/rmi://"+addr+":"+jmxPort.getPort()+"/jmxrmi");			    
 		              conn = JMXConnectorFactory.connect(jmxservice);		 
 		              server = conn.getMBeanServerConnection();
-		              rep=1;
+		             
 	                 } 	    
 	               catch ( Exception t) {	/*t.printStackTrace();*/}
 			}
@@ -419,7 +451,7 @@ public class VisualisationService implements IVisualisationService{
 			return HelperStructure.returnAttributeOperationJGroups(server);
 		}
 		@Override
-		public void scheduledHistory() {
+		public void scheduledHistory() throws Exception {
 		 
 			 Graphe graphe = findBydescription("initial");
 		     List<Node> listNode =  getAllCordinateurProbe(getAllMembers());
@@ -453,6 +485,8 @@ public class VisualisationService implements IVisualisationService{
 		    				if(m.getStatus().equals("actif")){
 		    				 Changement change = new Changement();
 		    				 change.setDiscription("leftMemberGraphe "+m.getLogicalName());change.setGraphe(graphe);
+		    				 changeGraphe = "remove Node "+m.getLogicalName();
+		    				 Thread.sleep(2000);
 		    				 m.setStatus("inactif");
 		    				 addMember(m);
 		    				 addChangement(change);
@@ -505,6 +539,8 @@ public class VisualisationService implements IVisualisationService{
 		    				 addMember(memb);
 		    				 Changement change = new Changement();
 		    				 change.setDiscription("newMemberInGraphe "+memb.getLogicalName());change.setGraphe(graphe);
+		    				 changeGraphe = "new Node "+memb.getLogicalName();
+		    				 Thread.sleep(2000);
 		    				 addChangement(change);
 		    				 System.out.println("************* addd ***************");
 		    			 }
@@ -534,13 +570,14 @@ public class VisualisationService implements IVisualisationService{
 				 
 				 if(db == 0){
 					 change.setDiscription("newAllMemberView  "+member.getLogicalName()+"  "+views);
+					// changeGraphe = "new links between "+member.getLogicalName()+" "+views;
 					 member.setViewList(views);
 				 }
 				
 				 else{
 					 change.setDiscription("newAllMemberViewMaster  "+member.getLogicalName()+"  "+views);
 					 member.setViewMasterList(views);
-					 
+					 //changeGraphe =" add to list view of "+member.getLogicalName();
 				 }
 				 addMember(member);
 				 addChangement(change);
@@ -553,6 +590,7 @@ public class VisualisationService implements IVisualisationService{
 				 if(db == 0){
 					 member.setViewList("");
 					 change.setDiscription("leftAllMemberView  "+member.getLogicalName()+"  "+member.getViewList());
+					 
 				 }
 				 
 				 else{
@@ -575,10 +613,12 @@ public class VisualisationService implements IVisualisationService{
     				      if(db == 0){
     				    	  member.setViewList(member.getViewList()+"  "+view);
     				    	  change.setDiscription("newMemberView  "+member.getLogicalName()+"  "+view);
+    				    	  //changeGraphe = view+" added to list view of "+member.getLogicalName();
     				      }
     				      else{
     				    	  member.setViewMasterList(member.getViewMasterList()+"  "+view);
     				    	  change.setDiscription("newMemberViewMaster  "+member.getLogicalName()+"  "+view);
+    				    	 // changeGraphe = view+" added to list view of "+member.getLogicalName();
     				      }
     				     
 				        }
@@ -589,9 +629,13 @@ public class VisualisationService implements IVisualisationService{
 					   if(!viewList.contains(view0)){
 						 Changement change = new Changement();
 						 if (db == 0)
-	    				    change.setDiscription("leftMemberView  "+member.getLogicalName()+"  "+view0);
+	    				    {change.setDiscription("leftMemberView  "+member.getLogicalName()+"  "+view0);
+	    				    //changeGraphe = view0+" left to list view of "+member.getLogicalName();
+	    				    }
 						 else
-							 change.setDiscription("leftMemberViewMaster  "+member.getLogicalName()+"  "+view0);
+							 {change.setDiscription("leftMemberViewMaster  "+member.getLogicalName()+"  "+view0);
+							// changeGraphe = view0+" left to list view of "+member.getLogicalName();
+							 }
 						 change.setGraphe(graphe);
 	    				 addChangement(change);
 	    				
@@ -680,15 +724,14 @@ public class VisualisationService implements IVisualisationService{
 		}
 		
 		@Override
-		public TreeMap<String, Object> getGrapheAtDateWithAllChange( Date dateFrom, Date dateTo, String heureFrom,String heureTo) {
+		public GrapheChangement getGrapheAtDateWithAllChange( Date dateFrom, Date dateTo, String heureFrom,String heureTo) {
 			ArrayList<Node> listNode = new ArrayList<Node>();
 			List<Graphe> listGraphe = getGrapheByDateCreation(dateFrom);
 			long idgraphe = listGraphe.get(0).getId();
 			List<Member> listMember = getAllMemberDB(idgraphe);
 			//System.out.println( "------------------------ "+listMember.size());
 			List<Changement> listChangement = findByDateheureModifBetween(idgraphe,dateFrom,dateTo,heureFrom,heureTo);
-			TreeMap<String,Object> result = new TreeMap<String,Object>();
-			TreeMap<String,String> listeChangeGraphe = new TreeMap<String,String>();
+			ArrayList<Change> listeChangeGraphe = new ArrayList<Change>();
 			int i = 0;int index = -1;
 			for(Changement change : listChangement){
 				String desc = change.getDiscription();i++;
@@ -698,12 +741,12 @@ public class VisualisationService implements IVisualisationService{
 				System.out.println("******************* "+index);
 				if(change.getDiscription().contains("leftMemberGraphe")){
 					listMember.get(index).setStatus("actif");
-					listeChangeGraphe.put("removeNode"+i,listMember.get(index).getLogicalName());
+					listeChangeGraphe.add(new Change("removeNode"+i,listMember.get(index).getLogicalName()));
 					continue;
 				}
 				if(desc.contains("changeStatustoActif")){
 					listMember.get(index).setStatus("inactif");
-					listeChangeGraphe.put("addNode"+i,listMember.get(index).getLogicalName());
+					listeChangeGraphe.add(new Change("addNode"+i,listMember.get(index).getLogicalName()));
 					continue;
 				}
 				if(desc.contains("changeValueCoordinateurFrom")){
@@ -712,7 +755,7 @@ public class VisualisationService implements IVisualisationService{
 				}
 				if(desc.contains("newMemberInGraphe")){
 					listMember.get(index).setStatus("inactif");
-					listeChangeGraphe.put("addNode"+i,listMember.get(index).getLogicalName());
+					listeChangeGraphe.add(new Change("addNode"+i,listMember.get(index).getLogicalName()));
 					continue;
 				}
 				if(desc.contains("newAllMemberView")){
@@ -735,24 +778,24 @@ public class VisualisationService implements IVisualisationService{
 					String tmp = listMember.get(index).getViewList();
 					tmp.substring(tmp.indexOf(desc.split(" ")[2]), desc.split(" ")[2].length());
 					listMember.get(index).setViewList(tmp);
-					listeChangeGraphe.put("addLink"+i,listMember.get(index).getLogicalName()+" "+desc.split(" ")[2]);
+					listeChangeGraphe.add(new Change("addLink"+i,listMember.get(index).getLogicalName()+" "+desc.split(" ")[2]));
 					continue;
 				}
 				if(desc.contains("newMemberViewMaster")){
 					String tmp = listMember.get(index).getViewMasterList();
 					tmp.substring(tmp.indexOf(desc.split(" ")[2]), desc.split(" ")[2].length());
 					listMember.get(index).setViewMasterList(tmp);
-					listeChangeGraphe.put("addLink"+i,listMember.get(index).getLogicalName()+" "+desc.split(" ")[2]);
+					listeChangeGraphe.add(new Change("addLink"+i,listMember.get(index).getLogicalName()+" "+desc.split(" ")[2]));
 					continue;
 				}
 				if(desc.contains("leftMemberView")){
 					listMember.get(index).setViewList(listMember.get(index).getViewList()+" "+desc.split(" ")[2]);
-					listeChangeGraphe.put("removeLink"+i,listMember.get(index).getLogicalName()+" "+desc.split(" ")[2]);
+					listeChangeGraphe.add(new Change("removeLink"+i,listMember.get(index).getLogicalName()+" "+desc.split(" ")[2]));
 					continue;
 				}
 				if(desc.contains("leftMemberViewMaster")){
 					listMember.get(index).setViewMasterList(listMember.get(index).getViewMasterList()+" "+desc.split(" ")[2]);
-					listeChangeGraphe.put("removeLink"+i,listMember.get(index).getLogicalName()+" "+desc.split(" ")[2]);
+					listeChangeGraphe.add(new Change("removeLink"+i,listMember.get(index).getLogicalName()+" "+desc.split(" ")[2]));
 					continue;
 				}
 				
@@ -762,12 +805,27 @@ public class VisualisationService implements IVisualisationService{
 				if(m.getStatus().equals("actif"))					
 				 listNode.add(HelperStructure.convertMemberToNode(m));	
 			}	
+			GrapheChangement grapheCh = new GrapheChangement();
+			grapheCh.setGraphe(createGraph(listNode));
+			grapheCh.setListChange(listeChangeGraphe);
 			
-			result.put("graphe", createGraph(listNode));
-			result.put("change", listeChangeGraphe);
-			//to complete
-			return result;
+			
+			return grapheCh;
 		}
+
+		@Override
+		public String getChangeGrapheNotify() {
+			
+			return changeGraphe;
+		}
+
+
+		
+		
+		
+		
+
+		
 		
 		
 }

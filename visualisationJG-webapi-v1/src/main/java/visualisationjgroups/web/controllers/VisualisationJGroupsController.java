@@ -23,6 +23,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 
 
+
+
+
+
+import visualisationjgroups.domain.GrapheChangement;
+import visualisationjgroups.domain.MBean;
+import visualisationjgroups.domain.MbeanShow;
 import visualisationjgroups.web.helpers.Static;
 import visualisationjgroups.web.models.PostAddProtocol;
 import visualisationjgroups.web.models.PostDeleteProtocol;
@@ -83,16 +90,18 @@ public class VisualisationJGroupsController {
 		}
 
 	// mbeans
-		@RequestMapping(value = "/getMbean/{uuid}/{addr}", method = RequestMethod.GET)
-		public Reponse getMbean(@PathVariable("uuid") String uuid, @PathVariable("addr") String addr) {
+		@RequestMapping(value = "/getMbean/{uuid}/{addr}/", method = RequestMethod.GET)		
+		public Reponse getMbean(@PathVariable("uuid") String uuid, @PathVariable("addr") String addr,HttpServletResponse response) {
+			visualisationJgroupsCorsController.getMbeans(response);
 			// header application
 			if (messages != null) {
 				return new Reponse(-1, messages);
 			}
 				
-			 TreeMap<String, Object> mbeans = null;
+			  MbeanShow mbeans = null;
 			try {
-				mbeans = application.getAllMBean(uuid, addr);
+				mbeans = application.getAllMBeanShow(uuid, addr);
+				
 			} catch (Exception e1) {
 				return new Reponse(1, Static.getErreursForException(e1));
 			}
@@ -100,8 +109,8 @@ public class VisualisationJGroupsController {
 			return new Reponse(0, mbeans);
 		}
 		
-		/*@RequestMapping(value = "/getCoord", method = RequestMethod.GET)
-		public Reponse getCoord(HttpServletResponse response) {
+		@RequestMapping(value = "/grapheDate/{dateFrom}/{dateTo}/{heureFrom}/{heureTo}/", method = RequestMethod.GET)
+		public Reponse getGrapheDate(@PathVariable("dateFrom") Date dateFrom,@PathVariable("dateTo") Date dateTo,@PathVariable("heureFrom") String heureFrom,@PathVariable("heureTo") String heureTo,HttpServletResponse response) {
 			// header CORS
 			visualisationJgroupsCorsController.getCoord(response);
 			// status application
@@ -110,12 +119,16 @@ public class VisualisationJGroupsController {
 			}
 			// graph
 			try {
-				return new Reponse(0, application.getAllCoordinateurDB());
-			} catch (Exception e) {
-				return new Reponse(1, Static.getErreursForException(e));
+				GrapheChangement rep = null;
+				rep = application.getGrapheAtDateWithAllChange(dateFrom, dateTo, heureFrom, heureTo);
+			} catch (Exception e1) {
+				return new Reponse(1, Static.getErreursForException(e1));
 			}
+			
+				return new Reponse(0, application.getGrapheAtDateWithAllChange(dateFrom, dateTo, heureFrom, heureTo));
+			
 		}
-		*/
+		
 	
 		@RequestMapping(value = "/addProt", method = RequestMethod.POST, consumes = "application/json; charset=UTF-8")
 		public Reponse addProtocol(@RequestBody PostAddProtocol post, HttpServletResponse response) {
@@ -219,5 +232,7 @@ public class VisualisationJGroupsController {
 			return new Reponse(0, rep);
 		}
 
+
+		
 
 }

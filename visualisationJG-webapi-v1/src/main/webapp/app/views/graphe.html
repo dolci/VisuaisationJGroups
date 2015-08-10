@@ -1,0 +1,51 @@
+<div>
+<div id="block-left">
+    <ul class="menu">
+
+        <li class="item1" ng-repeat="menu in menuList.data"><a href="">{{menu.label}} <span>{{menu.items.length}}</span></a>
+            <ul>
+                <li class="subitem1"ng-repeat="item in menu.items"><a href="" ng-click="returnMbean()">{{item}} </a></li>
+
+            </ul>
+        </li>
+
+    </ul>
+
+</div>
+    <div class ="block-container">
+        <h1>graphe</h1>
+        <div ng-repeat="menu in menuList"> {{menu.label}}</div>
+        <ul>
+            <li>Modèle global : {{main.text}}</li>
+            <li>Modèle local : {{menuList.data}}</li>
+        </ul>
+
+    </div>
+  <div class="block-right">
+        <div class="panel panel-primary" >
+            <!-- Default panel contents -->
+            <div class="panel-heading">MBeans</div>
+            </div>
+          <!--    <div class = "ng-scope">
+        <div class="span5 article-tree">
+          <div ng-style="{'overflow': 'auto'}">
+-->
+         
+          <div class="ng-scope">
+            <div ng-style="{'overflow': 'auto'}">
+
+                    <div class="tree well">
+                  <ul>
+                      <node-tree ng-model="displayTree"></node-tree>
+                  </ul>
+
+              </div>
+              
+              </div>
+          </div>
+
+   </div>
+ </div>    
+  
+      
+

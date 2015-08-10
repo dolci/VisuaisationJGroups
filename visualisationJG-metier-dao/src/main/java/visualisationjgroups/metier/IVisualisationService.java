@@ -6,6 +6,11 @@ import java.util.List;
 import java.util.TreeMap;
 import java.util.Vector;
 
+import visualisationjgroups.domain.GrapheChangement;
+import visualisationjgroups.domain.GrapheProbe;
+import visualisationjgroups.domain.MBean;
+import visualisationjgroups.domain.MbeanShow;
+import visualisationjgroups.domain.Menu;
 import visualisationjgroups.domain.Node;
 import visualisationjgroups.entities.Member;
 import visualisationjgroups.entities.JmxPort;
@@ -58,7 +63,7 @@ public interface IVisualisationService {
 		 * @param nodes
 		 * @return
 		 */
-		public TreeMap<String,ArrayList> createGraph(ArrayList<Node> members);
+		public GrapheProbe createGraph(ArrayList<Node> members);
 		/**
 		 * 
 		 * @param dateFrom
@@ -67,7 +72,7 @@ public interface IVisualisationService {
 		 * @param heureTo
 		 * @return
 		 */
-		public TreeMap<String,Object>getGrapheAtDateWithAllChange(Date dateFrom,Date dateTo,String heureFrom,String heureTo);
+		public GrapheChangement getGrapheAtDateWithAllChange(Date dateFrom,Date dateTo,String heureFrom,String heureTo);
 		// list of coordinator 
 		public ArrayList<Node> getAllCordinateurProbe(ArrayList<Node> members);
 		//
@@ -76,7 +81,7 @@ public interface IVisualisationService {
 		 * @param nodess
 		 * @return
 		 */
-		public TreeMap<String,ArrayList<String>> getMenu(ArrayList<Node> nodess);
+		public ArrayList<Menu> getMenu(ArrayList<Node> nodess);
 		
 		// invoke method via probe
 		/**
@@ -125,14 +130,15 @@ public interface IVisualisationService {
 	    //print stack protocol
 	    public String printStackProtocol();
 	    
-	    public void scheduledHistory();
+	    public void scheduledHistory() throws Exception;
 	   // list MBean 
 	    /**
 	     * 
 	     * @param 
 	     * @return
 	     */
-	 		public  TreeMap<String , Object> getAllMBean(String uuid,String addr);
+	 		public MbeanShow getAllMBeanShow(String uuid,String addr);
 	    // invoke method via JMX
 	    public List<String> invokeMethodJMX();
+	    public String getChangeGrapheNotify();
 }
