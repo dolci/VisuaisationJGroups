@@ -1,0 +1,57 @@
+<div class="modal-header">
+    <h3>Add Protocol</h3>
+</div>
+<div class="modal-body">
+    <form role="form">
+        <div class="form-group">
+            <label>Above Protocol</label>
+            <select ng-model="transport.selectedProtocolTran" class="selectpicker" data-style="btn-primary">
+                <option  value="TCP">TCP</option>
+                <option  value="UDP">UDP</option>
+                 <option  value="FD">FD</option>
+                 <option  value="4">FD_SOCK</option>
+                 <option  value="5">FORWARD_TO_COORD</option>
+                <option  value="6">FRAG2</option>
+                 <option  value="7">GMS</option>
+                <option  value="8">MERGE2</option>
+                 <option  value="9">MFC</option>
+                 <option  value="10">NAKACK2</option>
+                <option  value="11">PING</option>
+                 <option  value="12">RELAY2</option>
+                 <option  value="13">RSVP</option>
+                <option  value="14">STABLE</option>
+                 <option  value="15">UFC</option>
+                <option  value="16">UNICAST2</option>
+                 <option  value="17">VERIFY_SUSPECT</option>
+                <option  value="18">MPING</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Adress</label>
+            <select for="trans"ng-model="transport.selectedProtocolTran" class="selectpicker" data-style="btn-primary">
+                <option  value="TCP">192.168.1.4</option>
+                <option  value="UDP">UDP</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="addr">Name of ad Protocol</label>
+            <input type="text" class="form-control" id="addr" placeholder="address"ng-model="data.proName"required />
+        </div>
+
+    </form>
+   <!-- <ul>
+        <li ng-repeat="item in items">
+            <a ng-click="selected.item = item">{{ item }}</a>
+        </li>
+    </ul>
+    -->
+   <!-- Selected: <b>{{ proName }}</b>-->
+</div>
+<div class="modal-footer">
+    <button class="btn btn-primary" ng-click="ok()">OK</button>
+    <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+</div>
+
+<script>
+    $('.selectpicker').selectpicker();
+</script>

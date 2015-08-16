@@ -1,4 +1,16 @@
-
+.app-modal-window .modal-dialog {
+    width: 300px;
+}
+ .full button span {
+    background-color: limegreen;
+    border-radius: 32px;
+    color: black;
+  }
+  .partially button span {
+    background-color: orange;
+    border-radius: 32px;
+    color: black;
+  }
 a {
     text-decoration: none;
 }
@@ -33,9 +45,19 @@ ul, ul ul {
     word-break: break-all;
     word-wrap: break-word;
     color: #333;
-    background-color: #F5F5F5;
+    background-color: #FFFFFF;
     border: 1px solid #CCC;
     border-radius: 4px;
+}
+.block-gr{
+    width: 30%;
+    height: auto;
+    float:left;
+    display: block;
+    padding: 9.5px;
+    margin: 10px 0px 10px;
+    font-size: 13px;
+   
 }
 .block-right{
     width: 25%;
@@ -121,7 +143,14 @@ ul, ul ul {
     top: 50%;
     margin: -.5em 0 0 0;
 }
+.icon-minus-sign{
+	 background-image:url(../images/glyphicons-halflings.png);
+	background-position:-24px -96px}
+.icon-plus-sign{
+	background-image:url(../images/glyphicons-halflings.png);
+	background-position:0 -96px}
 .item1 > a:before {
+	url(../images/glyphicons-halflings.png)
     background-position: 0 -38px;
 }
 .item2 > a:before {

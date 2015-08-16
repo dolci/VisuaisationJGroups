@@ -27,6 +27,31 @@ import visualisationjgroups.entities.Member;
 public class HelperStructure {
 
 	
+	
+	public static ArrayList<RepMethodProbe> stucturerProbe(List<String> list, String namePro){
+		ArrayList<RepMethodProbe> repList = new ArrayList<RepMethodProbe>();
+		RepMethodProbe reProbe ;
+		for(String tmp :list){
+			
+			String [] res = tmp.split("\n");
+			 reProbe = new RepMethodProbe();
+
+			//System.out.println( "***********************"+tmp.substring(tmp.indexOf(namePro), tmp.indexOf("version")));
+			 reProbe.setReProtocol(tmp.substring(tmp.indexOf(namePro), tmp.indexOf("version")));
+			for (String resI :res){
+			
+				if(resI.contains("local_addr")){
+					//System.out.println("2 ---"+resI);
+					reProbe.setLogicalName(resI);
+					break;
+				}
+					
+			}
+			repList.add(reProbe);
+		}
+	
+	return repList;
+	}
 	public static ArrayList <Node> structureRepMemberProbe(List<String> reponses){
 		
 		ArrayList <Node> nodes = new ArrayList <Node>();
@@ -464,5 +489,61 @@ public class HelperStructure {
 			
 		return indice;
 	}
-
+	public static ArrayList<MBean> returnAttributeOperationMBJGroups(MBeanServerConnection server) {
+		ArrayList<MBean>listMB = new ArrayList<MBean>();
+		 Set<ObjectInstance> objectsIns = getMbeanForJMXAgent(server);
+		try{
+		 for(ObjectInstance objIns :objectsIns ){
+			MBean mbean = new MBean();
+			   ObjectName adaptorP = objIns.getObjectName();
+			   if(objIns.getClassName().contains("JChannel"))
+				   continue;
+			   else
+			   {
+			   System.out.println(adaptorP.toString());
+			  MBeanInfo mbi = server.getMBeanInfo(adaptorP);
+			 // System.out.println( "leng "+mbi.getAttributes().length);
+			  ArrayList <Attribute> attributes = new ArrayList <Attribute> ();
+			  ArrayList <Operation> operations = new ArrayList <Operation> ();
+			  // Attributes
+			  for( MBeanAttributeInfo infAtt: mbi.getAttributes()){
+				  Attribute att ;
+				  if(infAtt.getName().equals("membership_change_policy"))
+					att  = new Attribute(infAtt.getName(),"",infAtt.getDescription());
+				  else
+			    	 att = new Attribute(infAtt.getName(),server.getAttribute(adaptorP, infAtt.getName()),infAtt.getDescription());
+			    	 attributes.add(att);
+			    	
+			  }
+			  //Operations
+			  for( MBeanOperationInfo infOp: mbi.getOperations()){
+				     // paramter operation
+				     MBeanParameterInfo[] paramOp = infOp.getSignature();
+				     int size = paramOp.length;
+				     ArrayList params =new ArrayList();
+				     if (size>0){   
+				    	         for(int j=0;j<size;j++)
+				    	    	  params.add(paramOp[j].getType());
+				    	      }
+				    	       
+			    	 Operation op = new Operation(infOp.getName(),infOp.getReturnType(),infOp.getDescription(),params);
+			    	 //System.out.println("signature "+ op.getSignature()+" \n");
+			    	 operations.add(op);
+			     }
+			  
+			  if(objIns.getClassName().contains("org.jgroups.protocols.pbcast"))
+			     mbean.setLabel(objIns.getClassName().substring("org.jgroups.protocols.pbcast.".length()));
+			  else
+				  mbean.setLabel(objIns.getClassName().substring("org.jgroups.protocols.".length()));
+				  mbean.setListAtt(attributes);mbean.setListOper(operations);
+			   
+			  listMB.add(mbean);
+			   }
+		}}
+	   catch ( Throwable t) {
+			
+			t.printStackTrace();
+		}
+		 return listMB;
+	}
 }

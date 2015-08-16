@@ -37,7 +37,10 @@ public class VisualisationJGroupsCorsController {
 	public void getGraph(HttpServletResponse response) {
 		sendOptions(response);
 	}
-
+	@RequestMapping(value = "/getAdr", method = RequestMethod.OPTIONS)
+	public void getAddress(HttpServletResponse response) {
+		sendOptions(response);
+	}
 	// menu items
 	@RequestMapping(value = "/getMenu", method = RequestMethod.OPTIONS)
 	public void getMenu(HttpServletResponse response) {
@@ -47,6 +50,10 @@ public class VisualisationJGroupsCorsController {
 	// mbeans 
 	@RequestMapping(value = "/getMbean/{uuid}/{addr}/", method = RequestMethod.OPTIONS)
 	public void getMbeans(HttpServletResponse response) {
+		sendOptions(response);
+	}
+	@RequestMapping(value = "/getMbeanPro/{addr}/", method = RequestMethod.OPTIONS)
+	public void getMbeanPro(HttpServletResponse response) {
 		sendOptions(response);
 	}
     //add protocol

@@ -36,6 +36,7 @@ import visualisationjgroups.domain.MbeanShow;
 import visualisationjgroups.domain.Menu;
 import visualisationjgroups.domain.Node;
 import visualisationjgroups.domain.Probe;
+import visualisationjgroups.domain.RepMethod;
 import visualisationjgroups.entities.Member;
 import visualisationjgroups.entities.JmxPort;
 import visualisationjgroups.entities.Graphe;
@@ -229,27 +230,34 @@ public class VisualisationService  implements IVisualisationService{
 		/**
 		 * invoke method via Probe
 		 */
-		public TreeMap<String,List<String>> invokeMethodProbe(String nameProtocol,String nameMethod,String addresseIP) {
+		public ArrayList<RepMethod> invokeMethodProbe(String nameProtocol,String nameMethod,String addresseIP) {
 			
 			InetAddress addr = null;
 			Probe probe = new Probe();
+			
+			ArrayList<RepMethod> repList = new ArrayList<RepMethod>();
 			probe.getQuery().add("op="+nameProtocol+"."+nameMethod);
-			TreeMap<String,List<String>> res = new TreeMap<String,List<String>> ();
+			
 			try{
-			if(addresseIP.equals("all")){
+			if(addresseIP.equals("All")){
 			    addr = InetAddress.getByName(probe.getDEFAULT_DIAG_ADDR());
 			    probe.start(addr, probe.getBind_addr(), probe.getPort(), probe.getTtl(), probe.getTimeout(),
 						probe.getQuery(),null, probe.isWeed_out_duplicates(), probe.getPasscode());
-			    res.put("all", probe.getResponses());
+			    RepMethod rep = new RepMethod();
+			    System.out.println(rep.getListProbe().size());
+			    rep.setAddr("All");rep.setListProbe(HelperStructure.stucturerProbe(probe.getResponses(), nameProtocol));
+			    repList.add(rep);
 			    }
 			else{
 				 String [] addrs = addresseIP.split(",");
 				 for(String a :addrs){
+					 RepMethod rep = new RepMethod();
 					 addr = InetAddress.getByName(addresseIP);
 					 probe.start(addr, probe.getBind_addr(), probe.getPort(), probe.getTtl(), probe.getTimeout(),
 								probe.getQuery(),null, probe.isWeed_out_duplicates(), probe.getPasscode());
-					 res.put(a, probe.getResponses());
-					 
+					 rep.setAddr(a);
+					 rep.setListProbe(HelperStructure.stucturerProbe(probe.getResponses(), nameProtocol));
+					 repList.add(rep);
 				 }
 			}
 								
@@ -258,18 +266,18 @@ public class VisualisationService  implements IVisualisationService{
 			catch(Exception e){
 				
 			}
-			return res;
+			return repList;
 		}
 		
 		@Override
 		/**
 		 *  read attribute  from probe
 		 */
-		public List<String> readAttributeProbe(String addresseIP,TreeMap<String,List<String>> params) {
+		public RepMethod readAttributeProbe(String addresseIP,TreeMap<String,List<String>> params) {
 			
 			String query = "";
 			InetAddress addr ;
-			List<String> response = null;
+			RepMethod rep =  new RepMethod();
 			Probe probe = new Probe();
 			try{
 				// command line protocol +attribute 
@@ -291,13 +299,13 @@ public class VisualisationService  implements IVisualisationService{
 				addr = InetAddress.getByName(addresseIP);
 			probe.start(addr, probe.getBind_addr(), probe.getPort(), probe.getTtl(), probe.getTimeout(),
 					probe.getQuery(),null, probe.isWeed_out_duplicates(), probe.getPasscode());
-			response = probe.getResponses();
+			rep.setAddr("All");rep.setRep(probe.getResponses());
 			}
 			catch(Exception e){
 				
 			}
 			
-			return response;
+			return rep;
 			
 		}
 		@Override
@@ -369,7 +377,7 @@ public class VisualisationService  implements IVisualisationService{
 				addr = InetAddress.getByName(addresseIP);
 			probe.start(addr, probe.getBind_addr(), probe.getPort(), probe.getTtl(), probe.getTimeout(),
 					probe.getQuery(),null, probe.isWeed_out_duplicates(), probe.getPasscode());
-			res = "ok";
+			res = "okk";
 			}
 			catch(Exception e){
 				res = "false";
@@ -449,6 +457,41 @@ public class VisualisationService  implements IVisualisationService{
 			
 			
 			return HelperStructure.returnAttributeOperationJGroups(server);
+		}
+	
+		@Override
+		public ArrayList<MBean> getAllMBean(String logicalName,String addr) {
+			 MBeanServerConnection server = null;
+			 JMXConnector conn;
+			 JMXServiceURL jmxservice; 
+			 JmxPort jmxPort;
+			int port = 50000 /*Integer.parseInt(environment.getRequiredProperty("jmx.port"))*/,rep = 0;
+			
+			
+				// determined port 
+				 while(rep == 0){		 
+				         try {
+					              jmxservice = new JMXServiceURL("service:jmx:rmi:///jndi/rmi://"+addr+":"+port+"/jmxrmi");			    
+					              conn = JMXConnectorFactory.connect(jmxservice);		
+					              server = conn.getMBeanServerConnection();
+					              try {
+						              jmxservice = new JMXServiceURL("service:jmx:rmi:///jndi/rmi://"+addr+":"+port+"/jmxrmi");			    
+						              conn = JMXConnectorFactory.connect(jmxservice);		 
+						              server = conn.getMBeanServerConnection();
+						              rep=1;
+					                 } 	    
+					               catch ( Exception t) {	/*t.printStackTrace();*/}
+							           
+					   } 	    
+				      catch ( Exception t) {	/*t.printStackTrace();*/}
+				      port++;
+				 }
+							 
+			
+			
+				  
+			
+			return HelperStructure.returnAttributeOperationMBJGroups(server);
 		}
 		@Override
 		public void scheduledHistory() throws Exception {
@@ -817,6 +860,21 @@ public class VisualisationService  implements IVisualisationService{
 		public String getChangeGrapheNotify() {
 			
 			return changeGraphe;
+		}
+
+		@Override
+		public RepMethod getListBindAddr() {
+			RepMethod rep = new RepMethod();
+			ArrayList<Node> list =getAllMembers();
+			ArrayList<String>listAd = new ArrayList<String>();
+			
+			for(Node n:list){
+				listAd.add(n.getBind_addr());
+		
+			}
+			rep.setRep(listAd);
+			listAd.add("All");
+			return rep;
 		}
 
 

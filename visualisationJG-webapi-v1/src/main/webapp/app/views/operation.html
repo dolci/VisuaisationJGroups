@@ -4,79 +4,93 @@
     <div class="block-op">
     <form class="form-horizontal" name="commentform" >
         <div class="row">
-        <div class="form-group">
-            <label class="control-label col-md-4" for="first_name">First Name</label>
-            <div class="col-md-7">
-                <input type="text" class="form-control" id="first_name" name="first_name" placeholder="First Name"/>
+        <div class="form-group">           
+            <label class="control-label col-md-3">Protocol</label>
+            <div class="col-md-8">
+               <select  data-style="btn-inverse" ng-options="protocolMb as protocolMb.label for protocolMb in protocols" class="selectpicker" 
+               ng-model="protocolMb" ng-change="onChange(protocolMb)">
+                    <option style="display:none" value="">select protocol</option>   
+                    <!--   <option ng-repeat="protocol in protocols" value="{{protocol.label}}">{{protocol.label}}</option>-->        
+               </select>
+                  
             </div>
         </div>
         </div>
-        <div class="form-group">
-            <label class="control-label col-md-4" for="last_name">Last Name</label>
-            <div class="col-md-6">
-                <input type="text" class="form-control" id="last_name" name="last_name" placeholder="Last Name"/>
+        <div class="row">
+        <div class="form-group">           
+            <label class="control-label col-md-3">Method</label>
+            <div class="col-md-8">
+               <select  data-style="btn-inverse" ng-options="methods as methods.nameOp for methods in listOper" class="selectpicker" ng-model="methods">
+                    <option style="display:none" value="">select method</option> 
+                          
+               </select>
+                  
             </div>
         </div>
-        <div class="form-group">
-            <label class="control-label col-md-4" for="email">Email Address</label>
-            <div class="col-md-6 input-group">
-                <span class="input-group-addon">@</span>
-                <input type="email" class="form-control" id="email" name="email" placeholder="Email Address"/>
+        </div>
+        
+        <div class="row">
+        <div class="form-group">           
+            <label class="control-label col-md-3">Address</label>
+            <div class="col-md-8">
+               <select  data-style="btn-danger" ng-options="adresse as adresse for adresse in adr" class="selectpicker" ng-model="adress" multiple>
+                    
+                          <option style="display:none" value="">select address</option>
+               </select>
+                  
             </div>
         </div>
-        <div class="form-group">
-            <label class="control-label col-md-4" >Question or Comment</label>
-            <div class="col-md-6">
-                <textarea rows="6" class="form-control" id="comments" name="comments" placeholder="Your question or comment here"></textarea>
-            </div>
         </div>
-        <div class="form-group">
-            <div class="col-md-6">
-                <button type="submit" value="Submit" class="btn btn-custom pull-right">Send</button>
-            </div>
-        </div>
+        <div class="row">
+        <div class="form-group">  
+        <label class="control-label col-md-4"></label> 
+        <div class="col-md-8"> 
+         
+         <button class="btn btn-primary" ng-click="invoke()">Invoke</button>
+         </div>
+         </div>
+         </div>
     </form>
-  <!--  <div class="block-op">
-        <form class="form-horizontal" >
-            <div class="row">
-                <div class="col-sm-6 col-lg-4">
-                    <div class="form-group">
-                        <label class="col-md-4 control-label">adresse </label>
-                        <div class="col-md-8">
-                           <input type="text" id="addresse" ng-model="server.url" class="form-control"/>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-sm-6 col-lg-4">
-                    <div class="form-group">
-                        <label class="col-md-4 control-label">transport </label>
-                        <div class="col-md-8">
-            <select id="medecin" data-style="btn btn-primary" class="selectpicker" class="form-control">
-                <option value="1">Mme Marie PELISSIER</option>
-                <option value="1">Mr Jacques BROMARD</option>
-                <option value="1">Mr Philippe JANDOT</option>
-                <option value="1">Mme Justine JACQUEMOT</option>
-            </select>
-        </div>
-     </div>
-                    </div>
-                </div>
-     </form>
- -->
+  
         </div>
     </div>
     <div class="block-container">
         <div class="alert alert-info" >
-            <h3 class="modal-title">I'm a modal!</h3>
-
-            <div class="modal-body ">
-                <ul>
-                    <li ng-repeat="item in items">
-                        <a href="#" ng-click="$event.preventDefault(); selected.item = item">{{ item }}</a>
-                    </li>
-                </ul>
-                Selected: <b>{{ selected.item }}</b>
-            </div>
+            <div ng-show="showTable">
+                 <table id="repListInvoke" class="table" >
+                     <thead>
+                                <tr>
+                                    <th data-toggle="true">
+                                            <span>Address</span>
+                                    </th>
+                                    <th>
+                                        <span>Response</span>
+                                   </th>
+                             </tr>
+                    </thead>
+                 <tbody>
+                             <tr ng-repeat="res  in result">
+                                 <td>
+                                   <span class='status-metro status-active'>
+                                         {{res.addr}}
+                                  </span>
+                                </td>
+                                 <td>
+                                  <p ng-repeat="resp in res.listProbe">
+                                     <span  >
+                                      {{resp.logicalName}} <br>{{resp.reProtocol}}  </span>
+                                   </p>
+                                 </td>
+          
+                           </tr>
+                  </tbody>
+             </table>
+             </div>
+        </div>
         </div>
     </div>
-</div>
+
+
+
+	 
+	

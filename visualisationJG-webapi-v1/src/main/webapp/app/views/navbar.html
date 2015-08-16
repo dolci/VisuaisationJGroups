@@ -21,34 +21,28 @@
                         <span ng-click="main.showGraphe()">Graph</span>
                     </a>
                 </li>
-                <li>
-                    <a href="">
-                        <span ng-click="main.showOperation()">Method</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="">
-                        <span ng-click="main.showAttribute()">Attribute</span>
-                    </a>
-                </li>
-
                 <li class="dropdown">
+                
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">Action <b class="caret"></b></a>
                     <ul class="dropdown-menu">
                         <li><a href=""> <span ng-click="main.showOperation()">Operation</span> </a></li>
                         <li class="divider"></li>
-                        <li><a href=""> <span ng-click="main.showProtocol()">Protocol</span> </a></li>
-                        <li class="divider"></li>
                         <li><a href=""> <span ng-click="main.showAttribute()">Attribute</span> </a></li>
                         <li class="divider"></li>
+                       
                     </ul>
                 </li>
-
-                <li>
-                    <a href="">
-                        <span ng-click="main.showProtocol()">Protocol</span>
-                    </a>
-                </li>
+                <li class="dropdown">
+                
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Protocol <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                        <li><a href=""> <span ng-click="main.addProtocol()">Add</span> </a></li>
+                        <li class="divider"></li>
+                        <li><a href=""> <span ng-click="main.deleteProtocol()">Delete</span> </a></li>
+                        <li class="divider"></li>
+                       
+                    </ul>
+                </li>           
                 <li>
                     <a href="">
                         <span ng-click="main.showHistory()">History</span>
@@ -59,7 +53,7 @@
                         <span ng-click="main.showContact()">Contact</span>
                     </a>
                 </li>
-
+ 
             </ul>
             <!--<form class="navbar-form navbar-left" role="search">
                 <div class="form-group">

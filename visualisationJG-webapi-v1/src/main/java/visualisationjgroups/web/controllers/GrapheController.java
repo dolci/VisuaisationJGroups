@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Controller;
 
 
@@ -19,6 +21,7 @@ import visualisationjgroups.web.models.ApplicationModel;
 import visualisationjgroups.web.models.Notification;
 
 @Controller
+@EnableScheduling
 public class GrapheController  {
 
 	@Autowired
@@ -30,12 +33,18 @@ public class GrapheController  {
 		this.template = template;
 	}
 	
-	@RequestMapping(value="/jgrousp", method = RequestMethod.GET)
+ //@RequestMapping(value="/jgrousp", method = RequestMethod.POST)
+	/*@MessageMapping("/jgrousp")*/
+	@SendTo("/topic/jgrousp")
+	//@Scheduled(fixedDelay = 2000)
 	public  void notifyGraphe() throws Exception{
+		if(application.getChangeGrapheNotify() != null){
 		System.out.println("000     000   000 "+application.getChangeGrapheNotify());
 		Notification notif = new Notification();notif.setMessage( application.getChangeGrapheNotify());
-		 Thread.sleep(3000);
-		this.template.convertAndSend("/topic/jgrousp", notif);
+		 
+		this.template.convertAndSend("/topic/jgrousp", application.getChangeGrapheNotify());
+		Thread.sleep(3000);
+		}
 	}
 	/*@MessageMapping("/jgroups")
 	@SendTo("/topic/jgroups")

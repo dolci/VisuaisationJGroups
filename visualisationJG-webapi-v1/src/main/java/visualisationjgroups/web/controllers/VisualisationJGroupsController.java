@@ -27,9 +27,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 
 
+
 import visualisationjgroups.domain.GrapheChangement;
 import visualisationjgroups.domain.MBean;
 import visualisationjgroups.domain.MbeanShow;
+import visualisationjgroups.domain.RepMethod;
 import visualisationjgroups.web.helpers.Static;
 import visualisationjgroups.web.models.PostAddProtocol;
 import visualisationjgroups.web.models.PostDeleteProtocol;
@@ -72,6 +74,22 @@ public class VisualisationJGroupsController {
 			}
 		}
 
+		@RequestMapping(value = "/getAdr", method = RequestMethod.GET)
+		public Reponse getAddress(HttpServletResponse response) {
+			// header CORS
+			visualisationJgroupsCorsController.getAddress(response);
+			// status application
+			if (messages != null) {
+				return new Reponse(-1, messages);
+			}
+			// graph
+			try {
+				return new Reponse(0, application.getListBindAddr());
+			} catch (Exception e) {
+				return new Reponse(1, Static.getErreursForException(e));
+			}
+		}
+
 	// menu
 		@RequestMapping(value = "/getMenu", method = RequestMethod.GET)
 		public Reponse getMenu(HttpServletResponse response) {
@@ -108,6 +126,27 @@ public class VisualisationJGroupsController {
 			// response
 			return new Reponse(0, mbeans);
 		}
+		
+		
+		@RequestMapping(value = "/getMbeanPro/{addr}/", method = RequestMethod.GET)		
+		public Reponse getMbeanPro(@PathVariable("addr") String addr,HttpServletResponse response) {
+			visualisationJgroupsCorsController.getMbeans(response);
+			// header application
+			if (messages != null) {
+				return new Reponse(-1, messages);
+			}
+				
+			ArrayList<MBean> mbeans = null;
+			try {
+				mbeans = application.getAllMBean("", addr);
+				
+			} catch (Exception e1) {
+				return new Reponse(1, Static.getErreursForException(e1));
+			}
+			// response
+			return new Reponse(0, mbeans);
+		}
+		
 		
 		@RequestMapping(value = "/grapheDate/{dateFrom}/{dateTo}/{heureFrom}/{heureTo}/", method = RequestMethod.GET)
 		public Reponse getGrapheDate(@PathVariable("dateFrom") Date dateFrom,@PathVariable("dateTo") Date dateTo,@PathVariable("heureFrom") String heureFrom,@PathVariable("heureTo") String heureTo,HttpServletResponse response) {
@@ -175,7 +214,7 @@ public class VisualisationJGroupsController {
 			  if (messages != null) {
 					return new Reponse(-1, messages);
 				}	
-			  TreeMap<String,List<String>> rep = new TreeMap<String,List<String>>();
+			  ArrayList<RepMethod> rep = new ArrayList<RepMethod>();
 			try {		
 				     //System.out.println("addd   *********** "+addr);
 					rep = application.invokeMethodProbe(nameProtocol,nameMethod,addr);		
@@ -204,13 +243,13 @@ public class VisualisationJGroupsController {
 			return new Reponse(0, rep);
 		}
        
-		@RequestMapping(value = "/setAtt/{addr}/{protocol}/{params}", method = RequestMethod.GET)
+		@RequestMapping(value = "/getAtt/{addr}/{protocol}/{params}", method = RequestMethod.GET)
 		public Reponse readAttribute( @PathVariable("addr") String addr, @PathVariable("protocol") String protocol, @PathVariable("params") String params, HttpServletResponse response) {
 			 
 			  if (messages != null) {
 					return new Reponse(-1, messages);
 				}	
-			  List<String> rep = new ArrayList<String>();
+			  RepMethod rep =new RepMethod();
 			try {		
 				     //System.out.println("addd   *********** "+addr);
 				     String [] tmp1 = protocol.split(",");

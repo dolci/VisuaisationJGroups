@@ -37,11 +37,11 @@ public class TestGetAllMbeans {
 	@Test
 	public void test() throws Exception
 	{
-	  
+	// System.out.println( service.getListBindAddr().getRep().toString());
 		
-	    Gson gson = new GsonBuilder().create();
-	//   MbeanShow map = service.getAllMBean("lon1", "192.168.1.4");
-	   
+	 Gson gson = new GsonBuilder().create();
+	// System.out.println(gson.toJson( service.getAllMBean("", "192.168.1.4"))+"\n\n");
+	   System.out.println(gson.toJson(service.invokeMethodProbe("NAKACK2", "printMessages", "All")));
 	    	//System.out.println(" ***        "+key+"       ***");
 		 // String myCustomArray = gson.toJson(key);
 		//  System.out.println(gson.toJson(map)+"\n\n");

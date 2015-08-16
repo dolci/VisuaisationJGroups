@@ -1,7 +1,93 @@
-<h1>Attribute</h1>
-<div class="alert alert-info">
-    <ul>
-        <li>Modèle global : {{main.text}}</li>
-        <li>Modèle local : {{attribute.text}}</li>
-    </ul>
-</div>
+
+
+<div style="padding-top: 10% float:left">
+    <div class="block-op">
+    <form class="form-horizontal" name="commentform" >
+        <div class="row">
+        <div class="form-group">           
+            <label class="control-label col-md-3">Protocol</label>
+            <div class="col-md-8">
+               <select  data-style="btn-inverse" ng-options="protocolMb as protocolMb.label for protocolMb in protocols" class="selectpicker" 
+               ng-model="protocolMb" ng-change="onChange(protocolMb)">
+                    <option style="display:none" value="">select protocol</option>   
+                    <!--   <option ng-repeat="protocol in protocols" value="{{protocol.label}}">{{protocol.label}}</option>-->        
+               </select>
+                  
+            </div>
+        </div>
+        </div>
+        <div class="row">
+        <div class="form-group">           
+            <label class="control-label col-md-3">Attribute</label>
+            <div class="col-md-8">
+               <select  data-style="btn-inverse" ng-options="attribute as attribute.name for attribute in listAtt" class="selectpicker" ng-model="attribute" >
+                    <option style="display:none" value="">select attribute</option> 
+                          
+               </select>
+                  
+            </div>
+        </div>
+        </div>
+        
+        <div class="row">
+        <div class="form-group">           
+            <label class="control-label col-md-3">Address</label>
+            <div class="col-md-8">
+               <select  data-style="btn-danger" ng-options="adresse as adresse for adresse in adr" class="selectpicker" ng-model="adress" multiple>
+                    
+                          <option style="display:none" value="">select address</option>
+               </select>
+                  
+            </div>
+        </div>
+        </div>
+        <div class="row">
+        <div class="form-group">  
+        <label class="control-label col-md-4"></label> 
+        <div class="col-md-8"> 
+         
+         <button class="btn btn-primary" ng-click="invoke()">get</button>
+         </div>
+         </div>
+         </div>
+    </form>
+  
+        </div>
+    </div>
+    <div class="block-container">
+        <div class="alert alert-info" >
+            <div ng-show="showTable">
+                 <table id="repListInvoke" class="table" >
+                     <thead>
+                                <tr>
+                                    <th data-toggle="true">
+                                            <span>Address</span>
+                                    </th>
+                                    <th>
+                                        <span>Response</span>
+                                   </th>
+                             </tr>
+                    </thead>
+                 <tbody>
+                             <tr ng-repeat="res  in result">
+                                 <td>
+                                   <span class='status-metro status-active'>
+                                         {{res.addr}}
+                                  </span>
+                                </td>
+                                 <td>
+                                        <span >{{res.rep}}  </span>
+                                 </td>
+          
+                           </tr>
+                  </tbody>
+             </table>
+             </div>
+        </div>
+        </div>
+    </div>
+
+
+
+	 
+	

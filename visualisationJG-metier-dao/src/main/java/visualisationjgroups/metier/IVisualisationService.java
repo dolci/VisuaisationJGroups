@@ -12,6 +12,7 @@ import visualisationjgroups.domain.MBean;
 import visualisationjgroups.domain.MbeanShow;
 import visualisationjgroups.domain.Menu;
 import visualisationjgroups.domain.Node;
+import visualisationjgroups.domain.RepMethod;
 import visualisationjgroups.entities.Member;
 import visualisationjgroups.entities.JmxPort;
 import visualisationjgroups.entities.Graphe;
@@ -33,6 +34,7 @@ public interface IVisualisationService {
 		//
 		public List<Graphe> getGrapheByDateCreation(Date id);
 		
+		public RepMethod getListBindAddr();
 	
 		public Member findMemberByIdGrapheAndlogicalName(long idgraphe,String logicalName);
 		
@@ -91,7 +93,7 @@ public interface IVisualisationService {
 		 * @param addr ( unicast / multicast)
 		 * @return
 		 */
-	    public TreeMap<String,List<String>> invokeMethodProbe(String nameProtocol,String nameMethod,String addr);
+	    public  ArrayList<RepMethod> invokeMethodProbe(String nameProtocol,String nameMethod,String addr);
 	    // value attribute via probe
 	    /**
 	     * 
@@ -99,7 +101,7 @@ public interface IVisualisationService {
 	     * @param params list of protocol and attribute
 	     * @return
 	     */
-	    public List<String> readAttributeProbe(String addresseIP,TreeMap<String,List<String>> params);
+	    public RepMethod readAttributeProbe(String addresseIP,TreeMap<String,List<String>> params);
 	    // set attribute
 	    /**
 	     * 
@@ -138,6 +140,8 @@ public interface IVisualisationService {
 	     * @return
 	     */
 	 		public MbeanShow getAllMBeanShow(String uuid,String addr);
+	 		
+	 		public ArrayList<MBean> getAllMBean(String logicalName,String addr);
 	    // invoke method via JMX
 	    public List<String> invokeMethodJMX();
 	    public String getChangeGrapheNotify();

@@ -29,6 +29,8 @@ import org.springframework.stereotype.Component;
 
 
 
+
+
 import com.google.common.collect.Lists;
 
 import visualisationjgroups.web.helpers.Static;
@@ -38,6 +40,7 @@ import visualisationjgroups.domain.MBean;
 import visualisationjgroups.domain.MbeanShow;
 import visualisationjgroups.domain.Menu;
 import visualisationjgroups.domain.Node;
+import visualisationjgroups.domain.RepMethod;
 import visualisationjgroups.entities.Changement;
 import visualisationjgroups.entities.Graphe;
 import visualisationjgroups.entities.JmxPort;
@@ -130,14 +133,14 @@ public class ApplicationModel  implements IVisualisationService{
 	}
 
 	@Override
-	public TreeMap<String,List<String>> invokeMethodProbe(String nameProtocol,
+	public ArrayList<RepMethod> invokeMethodProbe(String nameProtocol,
 			String nameMethod, String addr) {
 		
 		return service.invokeMethodProbe(nameProtocol, nameMethod, addr);
 	}
 
 	@Override
-	public List<String> readAttributeProbe(String addresseIP,
+	public RepMethod readAttributeProbe(String addresseIP,
 			TreeMap<String, List<String>> params) {
 		
 		return service.readAttributeProbe(addresseIP, params);
@@ -169,7 +172,7 @@ public class ApplicationModel  implements IVisualisationService{
 	}
 
 	@Override
-	  @Scheduled(fixedDelay = 8000)
+	  @Scheduled(fixedDelay = 5000)
 	public void scheduledHistory() throws Exception {
 		service.scheduledHistory();
 		
@@ -276,6 +279,18 @@ public class ApplicationModel  implements IVisualisationService{
 	public String getChangeGrapheNotify() {
 		
 		return service.getChangeGrapheNotify();
+	}
+
+	@Override
+	public ArrayList<MBean> getAllMBean(String logicalName, String addr) {
+		
+		return service.getAllMBean(logicalName, addr);
+	}
+
+	@Override
+	public RepMethod getListBindAddr() {
+		
+		return service.getListBindAddr();
 	}
 
 	

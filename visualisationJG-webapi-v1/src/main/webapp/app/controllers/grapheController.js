@@ -81,7 +81,7 @@ angular.module("visualjgroups")
                     $scope.$apply();
                     $scope.intervalFunction();
                     $rootScope.myAppMainCtrlRefreshRunning = false;
-                }, 8000);
+                }, 100000);
            };
         };
         // Kick off the interval

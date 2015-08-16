@@ -1,7 +1,110 @@
-<h1>History</h1>
-<div class="alert alert-info">
-    <ul>
-        <li>Modèle global : {{main.text}}</li>
-        <li>Modèle local : {{history.text}}</li>
-    </ul>
+<div style="padding-top: 10% float:left">
+    <div class="block-gr">
+    <section class="panel panel-default">
+      <div class="panel-heading">
+                   <strong>
+                       <span class="glyphicon glyphicon-th"></span> FROM
+                    </strong>
+     </div>
+    
+    <form class="form-horizontal" name="commentform" >
+      
+        <div class="row">
+        <div class="form-group">           
+            <label class="control-label col-md-3">  Date</label> 
+        <div class="col-md-8">
+            <p class="input-group">
+              <input type="text" class="form-control" datepicker-popup="yyyy-MM-dd"ng-model="dtFrom" is-open="dtFromOpened"  max-date="maxDate" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" />
+              <span class="input-group-btn">
+                <button type="button" class="btn btn-default" ng-click="opendtFromOpened($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+              </span>
+            </p>
+        </div>
+        </div>
+        </div>
+     
+        <div class="row">
+        <div class="form-group">           
+             <label class="control-label col-md-3">Hour</label>
+             <div class="col-md-9">                 
+                 <timepicker ng-model="timefrom" ng-change="changed()" hour-step="hstep" minute-step="mstep" ></timepicker>             
+             </div>          
+                <!-- <div class="callout callout-info">
+                    <p>Date is: {{dt | date:'fullDate'}}</p>
+                </div> -->
+         </div>            
+        </div>
+       </form>
+       <div class="panel-heading">
+                   <strong>
+                       <span class="glyphicon glyphicon-th"></span> TO
+                    </strong>
+     </div>
+       
+       <form class="form-horizontal" name="commentform" >
+      
+        
+         <div class="row">
+        <div class="form-group">           
+            <label class="control-label col-md-3">  Date</label> 
+        <div class="col-md-8">
+            <p class="input-group">
+              <input type="text" class="form-control" datepicker-popup="yyyy-MM-dd"ng-model="dtTo" is-open="dtToOpened" min-date="dtFrom" max-date="maxDate" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" />
+              <span class="input-group-btn">
+                <button type="button" class="btn btn-default" ng-click="opendtToOpened($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+              </span>
+            </p>
+        </div>
+        </div>
+        </div>
+         
+        <div class="row">
+        <div class="form-group">           
+             <label class="control-label col-md-3">Hour</label>
+             <div class="col-md-9">                 
+                 <timepicker ng-model="timeTo" ng-change="changed()" hour-step="hstep" minute-step="mstep" ></timepicker>             
+             </div>          
+                <!-- <div class="callout callout-info">
+                    <p>Date is: {{dt | date:'fullDate'}}</p>
+                </div> -->
+         </div>            
+        </div>
+       </form>
+        
+     <div class="row">
+        <div class="form-group"> 
+          <label class="control-label col-md-2"></label>
+               
+              <button class="btn btn-primary col-md-8" ng-click="graphShow()">Graph</button>
+            
+         </div>
+      </div>           
+
+</section>
 </div>
+<div class="block-container">
+        <div class="alert alert-info" >
+            
+        </div>
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	 
+	

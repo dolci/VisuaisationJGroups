@@ -1,7 +1,7 @@
 
 // --------------------- module Angular
 
-angular.module("visualjgroups", ['ngRoute','ui.bootstrap']);
+angular.module("visualjgroups", ['ngRoute','ui.bootstrap','ngDialog']);
 angular.module("visualjgroups").config(["$routeProvider", function ($routeProvider) {
 // ------------------------ routage
   $routeProvider.when("/operation",
@@ -14,21 +14,21 @@ angular.module("visualjgroups").config(["$routeProvider", function ($routeProvid
       templateUrl: "views/graphe.html",
       controller: 'grapheCtrl'
     });
-  $routeProvider.when("/protocol",
+  /*$routeProvider.when("/protocol",
     {
       templateUrl: "views/protocol.html",
       controller: 'protocolCtrl'
-    });
+    });*/
     $routeProvider.when("/attribute",
         {
             templateUrl: "views/attribute.html",
             controller: 'attributeCtrl'
         });
-    $routeProvider.when("/mbean",
+   /* $routeProvider.when("/mbean",
         {
             templateUrl: "views/mbean.html",
             controller: 'mbeanCtrl'
-        });
+        });*/
     $routeProvider.when("/history",
         {
             templateUrl: "views/history.html",
