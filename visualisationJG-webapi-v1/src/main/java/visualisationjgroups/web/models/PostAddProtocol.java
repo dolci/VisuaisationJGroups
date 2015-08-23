@@ -6,7 +6,6 @@ public class PostAddProtocol {
 	private String protocolName;
 	private String protocolTransport;
 	private String addr;
-	private String position;
 	public String getProtocolName() {
 		return protocolName;
 	}
@@ -24,12 +23,6 @@ public class PostAddProtocol {
 	}
 	public void setAddr(String addr) {
 		this.addr = addr;
-	}
-	public String getPosition() {
-		return position;
-	}
-	public void setPosition(String position) {
-		this.position = position;
 	}
 
 	// getters et setters

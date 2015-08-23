@@ -3,18 +3,11 @@ package visualisationjgroups;
 import java.util.ArrayList;
 import java.util.TreeMap;
 
-import javax.management.MBeanServerConnection;
-import javax.management.remote.JMXConnector;
-import javax.management.remote.JMXConnectorFactory;
-import javax.management.remote.JMXServiceURL;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
-
 
 
 
@@ -46,10 +39,9 @@ public class TestGetAllMbeans {
 	{
 	// System.out.println( service.getListBindAddr().getRep().toString());
 		
-        
 	 Gson gson = new GsonBuilder().create();
-	 System.out.println(gson.toJson( service.getAllMBean("", "192.168.1.4"))+"\n\n");
-	//   System.out.println(gson.toJson(service.invokeMethodProbe("NAKACK2", "printMessages", "All")));
+	// System.out.println(gson.toJson( service.getAllMBean("", "192.168.1.4"))+"\n\n");
+	   System.out.println(gson.toJson(service.invokeMethodProbe("NAKACK2", "printMessages", "All")));
 	    	//System.out.println(" ***        "+key+"       ***");
 		 // String myCustomArray = gson.toJson(key);
 		//  System.out.println(gson.toJson(map)+"\n\n");

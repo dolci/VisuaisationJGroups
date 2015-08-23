@@ -20,7 +20,7 @@
         <div class="form-group">           
             <label class="control-label col-md-3">Attribute</label>
             <div class="col-md-8">
-               <select  data-style="btn-inverse" ng-options="attribute as attribute for attribute in listAtt" class="selectpicker" ng-model="attribute" multiple >
+               <select  data-style="btn-inverse" ng-options="attribute as attribute.name for attribute in listAtt" class="selectpicker" ng-model="attribute" >
                     <option style="display:none" value="">select attribute</option> 
                           
                </select>
@@ -70,16 +70,13 @@
                     </thead>
                  <tbody>
                              <tr ng-repeat="res  in result">
-                                <td>
+                                 <td>
                                    <span class='status-metro status-active'>
                                          {{res.addr}}
                                   </span>
                                 </td>
                                  <td>
-                                  <p ng-repeat="resp in res.listProbe">
-                                     <span  >
-                                      <b>{{resp.logicalName}}</b> <br>{{resp.reProtocol}}  </span>
-                                   </p>
+                                        <span >{{res.rep}}  </span>
                                  </td>
           
                            </tr>

@@ -33,7 +33,7 @@ public class TestPrintAttribute {
 		prams.put("NAKACK2", list2);
 		prams.put("UDP", list3);
 		//service.readAttributeProbe("192.168.1.4", prams)
-	  // System.out.println(" read attribute : "+service.readAttributeProbe("192.168.1.4", prams));
+	   System.out.println(" read attribute : "+service.readAttributeProbe("192.168.1.4", prams));
 	}
 
 }

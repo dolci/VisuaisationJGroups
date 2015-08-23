@@ -31,8 +31,6 @@ import org.springframework.stereotype.Component;
 
 
 
-
-
 import com.google.common.collect.Lists;
 
 import visualisationjgroups.web.helpers.Static;
@@ -142,9 +140,10 @@ public class ApplicationModel  implements IVisualisationService{
 	}
 
 	@Override
-	public ArrayList<RepMethod> readAttributeProbe(String addresseIP,String protocol,String params) {
+	public RepMethod readAttributeProbe(String addresseIP,
+			TreeMap<String, List<String>> params) {
 		
-		return service.readAttributeProbe(addresseIP,protocol, params);
+		return service.readAttributeProbe(addresseIP, params);
 	}
 
 	@Override
@@ -155,9 +154,9 @@ public class ApplicationModel  implements IVisualisationService{
 	}
 
 	@Override
-	public String addProtocol(String addr, String name, String transportP,String position) {
+	public String addProtocol(String addr, String name, String transportP) {
 		
-		return service.addProtocol(addr, name, transportP,position);
+		return service.addProtocol(addr, name, transportP);
 	}
 
 	@Override
@@ -173,7 +172,7 @@ public class ApplicationModel  implements IVisualisationService{
 	}
 
 	@Override
-      @Scheduled(fixedDelay = 5000)
+	  @Scheduled(fixedDelay = 5000)
 	public void scheduledHistory() throws Exception {
 		service.scheduledHistory();
 		
@@ -185,7 +184,12 @@ public class ApplicationModel  implements IVisualisationService{
 		return service.getAllMBeanShow(uuid, addr);
 	}
 
-	
+	@Override
+	public List<String> invokeMethodJMX() {
+		
+		return null;
+	}
+
 	@Override
 	public List<Member> getAllMemberDB(long idGraphe) {
 		
