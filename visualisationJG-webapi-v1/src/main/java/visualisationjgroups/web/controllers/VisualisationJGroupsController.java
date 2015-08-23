@@ -28,6 +28,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 
 
+
+
+import com.google.common.collect.Lists;
+
 import visualisationjgroups.domain.GrapheChangement;
 import visualisationjgroups.domain.MBean;
 import visualisationjgroups.domain.MbeanShow;
@@ -180,7 +184,7 @@ public class VisualisationJGroupsController {
 		
 			 String rep = null;
 			try {
-				rep = application.addProtocol(post.getAddr(), post.getProtocolName(), post.getProtocolTransport());
+				rep = application.addProtocol(post.getAddr(), post.getProtocolName(), post.getProtocolTransport(),post.getPosition());
 			} catch (Exception e1) {
 				return new Reponse(1, Static.getErreursForException(e1));
 			}
@@ -249,20 +253,12 @@ public class VisualisationJGroupsController {
 			  if (messages != null) {
 					return new Reponse(-1, messages);
 				}	
-			  RepMethod rep =new RepMethod();
+			  ArrayList<RepMethod> rep =new ArrayList<RepMethod>();
 			try {		
 				     //System.out.println("addd   *********** "+addr);
-				     String [] tmp1 = protocol.split(",");
-				     String [] tmp2 = params.split(",");
-				    TreeMap<String,List<String>> param = new TreeMap<String,List<String>>();
-				    for(String a :tmp1){
-				    	ArrayList<String> listAtt = new ArrayList<String>();int i;
-				    	 for (i=0 ;i<Integer.parseInt(a.split(" ")[1]);i++)
-				    		 listAtt.add(tmp2[i]);
-				    	 param.put(a, listAtt);
-				    	 i = Integer.parseInt(a.split(" ")[1]);
-				    	}
-					rep = application.readAttributeProbe(addr, param);		
+				    		 
+				    	
+					rep = application.readAttributeProbe(addr, protocol, params);		
 				
 			} catch (Exception e1) {
 				return new Reponse(1, Static.getErreursForException(e1));

@@ -1,11 +1,12 @@
 
 // contrôleur
 angular.module("visualjgroups")
-    .controller('mainCtrl', ['$scope', '$location','ngDialog','$modal',
-        function ($scope, $location,ngDialog,$modal) {
-
-    	 var key = 1000;
-         $scope.items = ['item1', 'item2', 'item3'];
+    .controller('mainCtrl', ['$scope', '$location','ngDialog','$modal','$http',
+        function ($scope, $location,ngDialog,$modal,$http) {
+     
+    	 var protocs = {};
+         $scope.items = [];
+         $scope.protocols = [];
             // modèles des pages
             $scope.graphe = {};
             $scope.operation = {};
@@ -35,27 +36,47 @@ angular.module("visualjgroups")
                 $location.path("/contact");
             };
 
+            
+            $http.get('http://localhost:8080//visualisationjg-webapi/getAdr') 
+            .then(function(json) {
+              $scope.items = json.data.data.rep; 
+              
+          return $http.get('http://localhost:8080//visualisationjg-webapi/getMbeanPro/'+$scope.items[0]+'/');
+              
+            })
+          .then(function(json) {
+        	  protocs = json.data.data;         
+              for(var i = 0; i < protocs.length; i++) {
+      	    	$scope.protocols[i] = protocs[i].label;
+      	    	
+      	    }
+           
+            });     
+            
             main.addProtocol  =  function() {
                 var modalInstance = $modal.open({
                     templateUrl: 'views/addProtocol.html',
                     controller: ModalInstanceAddCtrl,
                     windowClass: 'app-modal-window',
                     resolve: {
-                        items: function () {
-                            return $scope.items;
+                        items: function () {return $scope.items;
                         },
-                        key: function() {return key; }
-
-
+                        protocols: function() {return $scope.protocols; }
                     }
                 });
 
                 modalInstance.result.then(function (result) {
-                  //  $scope.selected = selectedItem;
-
-                  //  console.log("iteme selected **************************** ",$scope.selectedItem);
-
-                    console.log("result **************************** ",result);
+                var  postAddProtocol = {addr:result.addr.item,position:result.position.position,
+                		 protocolName:result.protocolName.proName,protocolTransport:result.protocolTransport.protocol};
+                    console.log("result **************************** ",postAddProtocol);
+                    $http.post('http://localhost:8080//visualisationjg-webapi/addProt',postAddProtocol).success(function (data) {
+                    	console.log("rep  "+data.data);
+                    	if(data.data == "ok")
+                    		alert("The protocol " + result.protocolName.proName+" added");
+                    }).error(function (data) {
+                        //   
+                    });
+                   
                 }, function () {
                     $log.info('Modal dismissed at: ' + new Date());
                 });
@@ -68,9 +89,8 @@ angular.module("visualjgroups")
                     resolve: {
                         items: function () {
                             return $scope.items;
-                        },
-                        key: function() {return key; }
-
+                        }
+                      
 
                     }
                 });
@@ -79,24 +99,44 @@ angular.module("visualjgroups")
                   //  $scope.selected = selectedItem;
 
                   //  console.log("iteme selected **************************** ",$scope.selectedItem);
+                	var postDeletePro = {nameProtocol:result.protocol.proName,addr:result.addr.item};
 
-                    console.log("result **************************** ",result);
+                    console.log("result **************************** ",postDeletePro);
+                    $http.post('http://localhost:8080//visualisationjg-webapi/removeProt',postDeletePro).success(function (data) {
+                    	console.log("rep  "+data.data);
+                    	if(data.data == "ok")
+                    		alert("Protocol :" + result.protocolName.proName+" removed");
+                    }).error(function (data) {
+                        //   
+                    });
                 }, function () {
                     $log.info('Modal dismissed at: ' + new Date());
                 });
             };
            
         }]);
-var ModalInstanceAddCtrl = function ($scope, $modalInstance, items ,key) {
+var ModalInstanceAddCtrl = function ($scope, $modalInstance, $timeout, items,$log ,protocols) {
 
 	   // alert("The key is " + key)
-	    $scope.data={proName:""}
-	    $scope.items = items;
+	  $scope.addProt = { proName : "BARRIER"};
+	  $scope.transport = { position : "above"};
+	  $scope.protocol = { listP :[]};
+	  $scope.protocol.listP = protocols;
+	  $scope.data = {items:[] };
+	    $scope.data.items = items;
 	    $scope.selected = {
-	        item: $scope.items[0]
+	        item: $scope.data.items[0]
 	    };
-	    $scope.transport={selectedProtocolTran:""};
-	var result ={item:$scope.selected,protocol:$scope.data,transport:$scope.transport};
+	    $scope.selectedP = {
+		    	protocol : $scope.protocol.listP[0]
+		    }
+	    $timeout(function(){
+         $('.selectpicker').selectpicker('refresh');
+           });
+	   
+	
+	    
+	var result ={protocolName:$scope.addProt,position:$scope.transport,protocolTransport:$scope.selectedP,addr:$scope.selected};
 	    $scope.ok = function () {
 	        $modalInstance.close(result);
 	    };
@@ -106,17 +146,31 @@ var ModalInstanceAddCtrl = function ($scope, $modalInstance, items ,key) {
 	        $modalInstance.dismiss('cancel');
 	    };
 	};
-	var ModalInstanceDeleteCtrl = function ($scope, $modalInstance, items ,key) {
+	var ModalInstanceDeleteCtrl = function ($scope, $modalInstance,$timeout,$log, items) {
 
 		   // alert("The key is " + key)
-		    $scope.data={proName:""}
-		    $scope.items = items;
-		    $scope.selected = {
-		        item: $scope.items[0]
+		    
+		    $scope.data = {
+		    		items:[]
 		    };
-		    $scope.transport={selectedProtocolTran:""};
-		var result ={item:$scope.selected,protocol:$scope.data,transport:$scope.transport};
+		    $scope.data.items = items;
+		    $scope.selected = {
+		        item: $scope.data.items[0]
+		    };
+		    
+		    $timeout(function(){
+                $('.selectpicker').selectpicker('refresh');
+                  });
+    	   
+		    $scope.deleteProt={proName:"BARRIER"}
+		    console.log("items",$scope.data.items);
+		    
+		   
+    	   
+		    
+		var result ={addr:$scope.selected , protocol:$scope.deleteProt};
 		    $scope.ok = function () {
+		    	console.log("result",result);
 		        $modalInstance.close(result);
 		    };
 

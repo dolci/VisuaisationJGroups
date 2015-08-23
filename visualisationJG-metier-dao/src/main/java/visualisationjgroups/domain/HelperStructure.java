@@ -28,7 +28,7 @@ public class HelperStructure {
 
 	
 	
-	public static ArrayList<RepMethodProbe> stucturerProbe(List<String> list, String namePro){
+	public static ArrayList<RepMethodProbe> stucturerProbe(List<String> list, String namePro, int ind){
 		ArrayList<RepMethodProbe> repList = new ArrayList<RepMethodProbe>();
 		RepMethodProbe reProbe ;
 		for(String tmp :list){
@@ -37,16 +37,22 @@ public class HelperStructure {
 			 reProbe = new RepMethodProbe();
 
 			//System.out.println( "***********************"+tmp.substring(tmp.indexOf(namePro), tmp.indexOf("version")));
-			 reProbe.setReProtocol(tmp.substring(tmp.indexOf(namePro), tmp.indexOf("version")));
+			 if(tmp.contains(namePro)){
+				 if(ind == 0)
+			   reProbe.setReProtocol(tmp.substring(tmp.indexOf(namePro), tmp.indexOf("version")));
+				 
+			   //System.out.println( "***********************"+tmp.substring(tmp.indexOf(namePro), tmp.indexOf("version")));
 			for (String resI :res){
-			
+				if(resI.contains(namePro) && ind == 1)
+					  reProbe.setReProtocol(resI);
 				if(resI.contains("local_addr")){
 					//System.out.println("2 ---"+resI);
 					reProbe.setLogicalName(resI);
 					break;
 				}
+				
 					
-			}
+			}}
 			repList.add(reProbe);
 		}
 	
@@ -527,6 +533,12 @@ public class HelperStructure {
 				    	      }
 				    	       
 			    	 Operation op = new Operation(infOp.getName(),infOp.getReturnType(),infOp.getDescription(),params);
+			    	 System.out.println("invoke methods "+infOp.getName().equals("printMessages"));
+			    	/* if(infOp.getName().equals("printMessages"))
+			    	 {
+			    		 System.out.println("invoke methods ");
+			    		 System.out.println("res   "+ server.invoke(adaptorP,"printMessages", null, null));
+			    	 }*/
 			    	 //System.out.println("signature "+ op.getSignature()+" \n");
 			    	 operations.add(op);
 			     }

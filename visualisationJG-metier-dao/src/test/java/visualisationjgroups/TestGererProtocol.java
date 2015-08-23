@@ -26,7 +26,7 @@ public class TestGererProtocol {
 	{
 		
 	   System.out.println(" list of intial Protocol : "+service.printStackProtocol());
-	   service.addProtocol("all", "MERGE3", "UDP");
+	   service.addProtocol("all", "MERGE3", "UDP","above");
 	   System.out.println(" list Protocol  after add : "+service.printStackProtocol());
 	   
 	   

@@ -101,7 +101,7 @@ public interface IVisualisationService {
 	     * @param params list of protocol and attribute
 	     * @return
 	     */
-	    public RepMethod readAttributeProbe(String addresseIP,TreeMap<String,List<String>> params);
+	    public ArrayList<RepMethod> readAttributeProbe(String addresseIP,String protocol,String params);
 	    // set attribute
 	    /**
 	     * 
@@ -120,7 +120,7 @@ public interface IVisualisationService {
 	     * @param transportP (UDP / TCP)
 	     * @return
 	     */
-	    public String  addProtocol(String addr,String name,String transportP);
+	    public String  addProtocol(String addr,String name,String transportP,String position);
 	    // delete protocol
 	    /**
 	     * 
@@ -143,6 +143,6 @@ public interface IVisualisationService {
 	 		
 	 		public ArrayList<MBean> getAllMBean(String logicalName,String addr);
 	    // invoke method via JMX
-	    public List<String> invokeMethodJMX();
+	    //public List<String> invokeMethodJMX();
 	    public String getChangeGrapheNotify();
 }
