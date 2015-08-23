@@ -9,7 +9,8 @@
             <div class="col-md-8">
                <select  data-style="btn-inverse" ng-options="protocolMb as protocolMb.label for protocolMb in protocols" class="selectpicker" 
                ng-model="protocolMb" ng-change="onChange(protocolMb)">
-                    <option style="display:none" value="">select protocol</option>   
+               <option value="" ng-if="protocolMb">Select protocol</option>
+                       
                     <!--   <option ng-repeat="protocol in protocols" value="{{protocol.label}}">{{protocol.label}}</option>-->        
                </select>
                   
@@ -78,7 +79,7 @@
                                  <td>
                                   <p ng-repeat="resp in res.listProbe">
                                      <span  >
-                                      {{resp.logicalName}} <br>{{resp.reProtocol}}  </span>
+                                      <b>{{resp.logicalName}}</b> <br>{{resp.reProtocol}}  </span>
                                    </p>
                                  </td>
           

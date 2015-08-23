@@ -9,11 +9,11 @@ angular.module("visualjgroups")
           
              $http.get('http://localhost:8080//visualisationjg-webapi/getAdr') 
             .then(function(json) {
-              $scope.adr = json.data.data.rep; 
-              $scope.adress = $scope.adr[0];
-             
+              $scope.adr = json.data.data.listName; 
+              $scope.adress = json.data.data.rep[0];
+             console.log("adresse ",$scope.adr);
               
-          return $http.get('http://localhost:8080//visualisationjg-webapi/getMbeanPro/'+$scope.adr[0]+'/');
+          return $http.get('http://localhost:8080//visualisationjg-webapi/getMbeanPro/'+$scope.adress+'/');
               
             })
           .then(function(json) {
@@ -43,6 +43,8 @@ angular.module("visualjgroups")
             	    };
             	$scope.invoke = function(){
             		
+            		 console.log('http://localhost:8080//visualisationjg-webapi/invokeMethod/'+$scope.protocolMb.label+'/'+ $scope.methods.nameOp+'/'+$scope.adress+'/');
+            		 console.log($scope.adress == "All");
             		$http.get('http://localhost:8080//visualisationjg-webapi/invokeMethod/'+$scope.protocolMb.label+'/'+ $scope.methods.nameOp+'/'+$scope.adress+'/').success(function (data) {
                    //   console.log("voir adrrese ",'http://localhost:8080//visualisationjg-webapi/invokeMethod/'+$scope.protocolMb.label+'/'+ $scope.methods.nameOp+'/'+$scope.adress+'/');
             			// $scope.showTable = true;

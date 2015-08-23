@@ -5,13 +5,24 @@
     <form role="form">
         <div class="form-group">
             <label>Name Protocol</label>
-            <input type="text" class="form-control" id="name" placeholder="name protocol"ng-model="data.proName"required />
+             <select  ng-model="deleteProt.proName" class="selectpicker" data-style="btn-primary">
+                   <option  value="BARRIER" >BARRIER </option>
+                   <option  value="COUNTER">COUNTER</option>
+                   <option  value="DELAY">DELAY</option>
+                   <option  value="DISCARD">DISCARD</option>
+                   <option  value="DISCARD_PAYLOAD">DISCARD_PAYLOAD</option>
+                   <option  value="DUPL">DUPL</option>
+                   <option  value="SIZE">SIZE</option>
+                   <option  value="STATS">STATS</option>
+                   <option  value="SUPERVISOR">SUPERVISOR</option>
+                  <option  value="TRACE">TRACE</option>
+            </select>
         </div>
         <div class="form-group">
             <label>Address</label>
-            <select for="trans"ng-model="adr.selectedAdr" class="selectpicker" data-style="btn-primary">
-                <option  value="TCP">TCP</option>
-                <option  value="UDP">UDP</option>
+            
+            <select  ng-options="item as item for item in data.items" class="selectpicker" data-style="btn-primary" ng-model="selected.item" ng-if="data.items">
+                  
             </select>
         </div>
     </form>

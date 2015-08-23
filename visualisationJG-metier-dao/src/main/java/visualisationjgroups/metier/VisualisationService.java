@@ -10,7 +10,10 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.Vector;
 
+import javax.management.MBeanInfo;
 import javax.management.MBeanServerConnection;
+import javax.management.ObjectInstance;
+import javax.management.ObjectName;
 import javax.management.remote.JMXConnector;
 import javax.management.remote.JMXConnectorFactory;
 import javax.management.remote.JMXServiceURL;
@@ -37,6 +40,7 @@ import visualisationjgroups.domain.Menu;
 import visualisationjgroups.domain.Node;
 import visualisationjgroups.domain.Probe;
 import visualisationjgroups.domain.RepMethod;
+import visualisationjgroups.domain.RepMethodProbe;
 import visualisationjgroups.entities.Member;
 import visualisationjgroups.entities.JmxPort;
 import visualisationjgroups.entities.Graphe;
@@ -234,7 +238,6 @@ public class VisualisationService  implements IVisualisationService{
 			
 			InetAddress addr = null;
 			Probe probe = new Probe();
-			
 			ArrayList<RepMethod> repList = new ArrayList<RepMethod>();
 			probe.getQuery().add("op="+nameProtocol+"."+nameMethod);
 			
@@ -244,19 +247,33 @@ public class VisualisationService  implements IVisualisationService{
 			    probe.start(addr, probe.getBind_addr(), probe.getPort(), probe.getTtl(), probe.getTimeout(),
 						probe.getQuery(),null, probe.isWeed_out_duplicates(), probe.getPasscode());
 			    RepMethod rep = new RepMethod();
-			    System.out.println(rep.getListProbe().size());
-			    rep.setAddr("All");rep.setListProbe(HelperStructure.stucturerProbe(probe.getResponses(), nameProtocol));
+			    //System.out.println(rep.getListProbe().size());
+			    rep.setAddr("All");rep.setListProbe(HelperStructure.stucturerProbe(probe.getResponses(), nameProtocol,0));
 			    repList.add(rep);
 			    }
 			else{
-				 String [] addrs = addresseIP.split(",");
-				 for(String a :addrs){
+			     System.out.println("adresse "+ addresseIP);
+
+				 String [] logicalNames = addresseIP.split(",");
+				 for(String logicalName :logicalNames){
 					 RepMethod rep = new RepMethod();
-					 addr = InetAddress.getByName(addresseIP);
+					 for( Node n :getAllMembers()){
+						 if(n.getLogical_name().equals(logicalName)){
+							 RepMethodProbe repJMX = new  RepMethodProbe(); 
+							 repJMX.setLogicalName(n.getBind_addr());
+							 System.out.println("*******"+invokeMethodJMX( n.getBind_addr(), logicalName, nameProtocol, nameMethod));
+							 repJMX.setReProtocol(invokeMethodJMX( n.getBind_addr(), logicalName, nameProtocol, nameMethod));
+							 rep.getListProbe().add(repJMX);
+							 break;
+						 }
+					 }
+					
+					 /*addr = InetAddress.getByName(addresseIP);
 					 probe.start(addr, probe.getBind_addr(), probe.getPort(), probe.getTtl(), probe.getTimeout(),
-								probe.getQuery(),null, probe.isWeed_out_duplicates(), probe.getPasscode());
-					 rep.setAddr(a);
-					 rep.setListProbe(HelperStructure.stucturerProbe(probe.getResponses(), nameProtocol));
+								probe.getQuery(),null, probe.isWeed_out_duplicates(), probe.getPasscode());*/
+				//	 invokeMethodJMX( addr, logicalName, nameProtocol, nameMethod);
+					 rep.setAddr(logicalName);
+					// rep.setListProbe(HelperStructure.stucturerProbe(probe.getResponses(), nameProtocol));
 					 repList.add(rep);
 				 }
 			}
@@ -273,39 +290,60 @@ public class VisualisationService  implements IVisualisationService{
 		/**
 		 *  read attribute  from probe
 		 */
-		public RepMethod readAttributeProbe(String addresseIP,TreeMap<String,List<String>> params) {
+		public ArrayList<RepMethod> readAttributeProbe(String addresseIP,String protocol,String params) {
 			
 			String query = "";
 			InetAddress addr ;
-			RepMethod rep =  new RepMethod();
+			RepMethod rep ;
 			Probe probe = new Probe();
+			ArrayList<RepMethod> repList = new ArrayList<RepMethod>();
 			try{
 				// command line protocol +attribute 
-				for(String key : params.keySet()){
-					query+="jmx="+key+".";System.out.println(key);
-					for(int i=0 ;i<params.get(key).size();i++){
-						
-						if(i==params.get(key).size() - 1)
-							query+=params.get(key).get(i);
+                  
+					query+="jmx="+protocol+".";System.out.println(protocol);
+					String [] attributes = params.split(",");
+					for(int i=0 ;i<attributes.length;i++){
+						if(i == attributes.length - 1)
+							query+=attributes[i];
 						else
-							query+=params.get(key).get(i)+",";
+							query+=attributes[i]+",";
 					}
-					query+=" ";
-					}
+					
 				probe.getQuery().add(query);
-			if(addresseIP.equals("all"))
+				
+			if(addresseIP.equals("All")){
 				addr = InetAddress.getByName(probe.getDEFAULT_DIAG_ADDR());
-			else
-				addr = InetAddress.getByName(addresseIP);
-			probe.start(addr, probe.getBind_addr(), probe.getPort(), probe.getTtl(), probe.getTimeout(),
+				probe.start(addr, probe.getBind_addr(), probe.getPort(), probe.getTtl(), probe.getTimeout(),
+						probe.getQuery(),null, probe.isWeed_out_duplicates(), probe.getPasscode());		      
+			    //System.out.println(rep.getListProbe().size());
+			       rep = new RepMethod();
+			    rep.setAddr("All");rep.setListProbe(HelperStructure.stucturerProbe(probe.getResponses(),protocol,1));
+			    System.out.println("                          **** "+HelperStructure.stucturerProbe(probe.getResponses(),protocol,1));
+			    repList.add(rep);
+				
+				}
+			else{
+			
+				
+				String [] adrs = addresseIP.split(",");
+				for(String a : adrs){
+					addr = InetAddress.getByName(a);
+			        probe.start(addr, probe.getBind_addr(), probe.getPort(), probe.getTtl(), probe.getTimeout(),
 					probe.getQuery(),null, probe.isWeed_out_duplicates(), probe.getPasscode());
-			rep.setAddr("All");rep.setRep(probe.getResponses());
+			        rep = new RepMethod();
+				    //System.out.println(rep.getListProbe().size());
+				    rep.setAddr(a);rep.setListProbe(HelperStructure.stucturerProbe(probe.getResponses(),protocol,1));
+				    repList.add(rep);
+			
+			
+				}
+			}
 			}
 			catch(Exception e){
 				
 			}
 			
-			return rep;
+			return repList;
 			
 		}
 		@Override
@@ -342,13 +380,14 @@ public class VisualisationService  implements IVisualisationService{
 		/**
 		 * add a protocol at runtime
 		 */
-	    public String addProtocol(String addresseIP, String nameProtocol,String transportP) {
+	    public String addProtocol(String addresseIP, String nameProtocol,String transportP,String position) {
 			String res = "";
 			InetAddress addr;
 			Probe probe = new Probe();
-			probe.getQuery().add("insert-protocol="+nameProtocol+"=above="+transportP);
+			probe.getQuery().add("insert-protocol="+nameProtocol+"="+position+"="+transportP);
+			System.out.println("insert pro "+"insert-protocol="+nameProtocol+"="+position+"="+transportP);
 			try{
-				if(addresseIP.equals("all"))
+				if(addresseIP.equals("All"))
 					   addr = InetAddress.getByName(probe.getDEFAULT_DIAG_ADDR());
 					else
 						addr = InetAddress.getByName(addresseIP);
@@ -357,6 +396,7 @@ public class VisualisationService  implements IVisualisationService{
 					res = "ok";
 					}
 					catch(Exception e){
+						System.out.println(e.getMessage());
 						res = "false";
 					}
 					return res;
@@ -371,13 +411,13 @@ public class VisualisationService  implements IVisualisationService{
 			Probe probe = new Probe();
 			try{
 				probe.getQuery().add("remove-protocol="+nameProtocol);
-			if(addresseIP.equals("all"))
+			if(addresseIP.equals("All"))
 			   addr = InetAddress.getByName(probe.getDEFAULT_DIAG_ADDR());
 			else
 				addr = InetAddress.getByName(addresseIP);
 			probe.start(addr, probe.getBind_addr(), probe.getPort(), probe.getTtl(), probe.getTimeout(),
 					probe.getQuery(),null, probe.isWeed_out_duplicates(), probe.getPasscode());
-			res = "okk";
+			res = "ok";
 			}
 			catch(Exception e){
 				res = "false";
@@ -402,13 +442,60 @@ public class VisualisationService  implements IVisualisationService{
 			return  HelperStructure.structurePrintStackProtocol(probe.getResponses());
 		}
 
-		@Override
+		
 		/**
 		 * 
 		 */
-		public List<String> invokeMethodJMX() {
+		public String invokeMethodJMX(String addr,String logicalName,String nameProtocol,String nameMethod) {
+			 MBeanServerConnection server = null;
+			 JMXConnector conn;
+			 JMXServiceURL jmxservice; 
+			 JmxPort jmxPort;
+			String res = null;
+			int port = 50000 /*Integer.parseInt(environment.getRequiredProperty("jmx.port"))*/,rep = 0;
 			
-			return null;
+			if (getJmxPortById(logicalName) == null){
+				// determined port 
+				 while(rep == 0){		 
+					 
+				         try {
+				        	 //System.out.println("************************** "+addr);
+					              jmxservice = new JMXServiceURL("service:jmx:rmi:///jndi/rmi://"+addr+":"+port+"/jmxrmi");			    
+					              conn = JMXConnectorFactory.connect(jmxservice);		
+					              server = conn.getMBeanServerConnection();
+					              if(HelperStructure.verifMBeanLogiclName(server,logicalName) == 1){
+					                rep=1;
+					                jmxPort =(JmxPort) new JmxPort().build(logicalName,0);jmxPort.setAddr(addr);jmxPort.setPort(port);
+								    addJmxPort(jmxPort);
+								   
+								  }
+				             } 	    
+				      catch ( Exception t) {	/*t.printStackTrace();*/}
+				      port++;
+				 }
+							 
+			}
+			else{
+				  jmxPort = getJmxPortById(logicalName);
+				 // System.out.println("jmpor************************** "+jmxPort);
+				   try {
+		              jmxservice = new JMXServiceURL("service:jmx:rmi:///jndi/rmi://"+addr+":"+jmxPort.getPort()+"/jmxrmi");			    
+		              conn = JMXConnectorFactory.connect(jmxservice);		 
+		              server = conn.getMBeanServerConnection();
+		              Set<ObjectInstance> mbeans = server.queryMBeans(null, null);
+					  for (ObjectInstance objectIns : mbeans)  {
+						  if(objectIns.getClassName().contains(nameProtocol)) {
+							  ObjectName adaptorP = objectIns.getObjectName();
+							  
+							  res = server.invoke(adaptorP,nameMethod, null, null).toString();
+						  }
+					  }
+		             
+	                 } 	    
+	               catch ( Exception t) {	/*t.printStackTrace();*/}
+			}
+			
+			return res;
 		}	
 		@Override
 		/**
@@ -504,7 +591,7 @@ public class VisualisationService  implements IVisualisationService{
 		    	 // initial :add all node to database
                   
 		    	 if(graphe == null){
-		    		 System.out.println("************* addd ***************");
+		    		// System.out.println("************* addd ***************");
 		    		  Graphe grapheTmp = new Graphe("initial");
 		    		 for(Node n :listNode ){
 		    			 Member m = HelperStructure.convertNodeToMember(n);
@@ -565,14 +652,14 @@ public class VisualisationService  implements IVisualisationService{
 		    				 ArrayList<String> viewList = n.getView(); ArrayList<String> viewListDb = null;
 		    				 if(member.getViewList().length()>0 )
 		    				   viewListDb = Lists.newArrayList(member.getViewList().split(" "));	 
-		    				 System.out.println("------------------view-------------- "+viewList.toString());
+		    			//	 System.out.println("------------------view-------------- "+viewList.toString());
 		    				  compareTwoList( member, graphe, viewList, viewListDb,0);
 		    				//	listChange.addAll(compareTwoList( member, graphe, viewList, viewListDb));
 		    				//list of view master 
 		    				 ArrayList<String> viewMasterList = n.getViewMaster(); ArrayList<String> viewMasterListDb = null;
 		    				 if(member.getViewMasterList().length()>0)
 		    					 viewMasterListDb = Lists.newArrayList(member.getViewMasterList().split(" "));
-		    				 System.out.println("**************master**************** "+viewMasterList.toString());
+		    			//	 System.out.println("**************master**************** "+viewMasterList.toString());
 		    				// if(compareTwoList( member, graphe, viewMasterList, viewMasterListDb).size()>0)
 			    			compareTwoList( member, graphe, viewMasterList, viewMasterListDb,1);
 		    			 }
@@ -585,7 +672,7 @@ public class VisualisationService  implements IVisualisationService{
 		    				 changeGraphe = "new Node "+memb.getLogicalName();
 		    				 Thread.sleep(2000);
 		    				 addChangement(change);
-		    				 System.out.println("************* addd ***************");
+		    				// System.out.println("************* addd ***************");
 		    			 }
 		    		 // fin for !	 
 		    	 }
@@ -869,11 +956,18 @@ public class VisualisationService  implements IVisualisationService{
 			ArrayList<String>listAd = new ArrayList<String>();
 			
 			for(Node n:list){
-				listAd.add(n.getBind_addr());
-		
+				if(!listAd.contains(n.getBind_addr()))
+				  listAd.add(n.getBind_addr());
+				rep.getListName().add(n.getLogical_name());
+				if(!rep.getListAllAdr().contains(n.getMcast_addr()))
+				rep.getListAllAdr().add(n.getMcast_addr());
+				
 			}
-			rep.setRep(listAd);
+			rep.getListAllAdr().addAll(listAd);
+			rep.getListName().add("All");
 			listAd.add("All");
+			rep.setRep(listAd);
+			
 			return rep;
 		}
 
