@@ -39,7 +39,7 @@ angular.module("visualjgroups")
             
             $http.get('http://localhost:8080//visualisationjg-webapi/getAdr') 
             .then(function(json) {
-              $scope.items = json.data.data.rep; 
+              $scope.items = json.data.data.listAllAdr; 
               
           return $http.get('http://localhost:8080//visualisationjg-webapi/getMbeanPro/'+$scope.items[0]+'/');
               
@@ -103,9 +103,9 @@ angular.module("visualjgroups")
 
                     console.log("result **************************** ",postDeletePro);
                     $http.post('http://localhost:8080//visualisationjg-webapi/removeProt',postDeletePro).success(function (data) {
-                    	console.log("rep  "+data.data);
+                    	console.log("rep0  "+data.data);
                     	if(data.data == "ok")
-                    		alert("Protocol :" + result.protocolName.proName+" removed");
+                    		alert("Protocol :" + result.protocol.proName+" removed");
                     }).error(function (data) {
                         //   
                     });

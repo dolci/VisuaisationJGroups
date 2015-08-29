@@ -14,6 +14,20 @@
 a {
     text-decoration: none;
 }
+#notes {
+    float: left;
+    margin-left:2px;
+    
+}
+
+h2 {
+    font-size: 1.2em;
+    color: #00ff00;
+}
+h3 {
+    font-size: 1.1em;
+    
+}
 ul, ul ul {
     margin: 0;
     padding: 0;
@@ -26,6 +40,14 @@ ul, ul ul {
     float:left;
     font-size: 0.8125em;
 }
+div#nodeGraph svg {
+    background-color: white;
+    cursor: move;
+     float: left;
+    position: relative;
+    
+}
+
 .block-container{
     width:60%;
     padding-left: 15px;

@@ -7,13 +7,14 @@ angular.module("visualjgroups")
 
       // modèle de la page
       var graphe = $scope.graphe;
-
         /*$scope.messages = [];
         $scope.message = "";
         $scope.max = 140;*/
         var nodess = {};
-        var logical = $scope.logical;
-        var addr = $scope.addr;
+        var logical ;
+        var addr ;
+        var listMember,menuItem;
+        
         $scope.getData = function(){
             member = $http.get('http://localhost:8080//visualisationjg-webapi/getGraph');
             menu = $http.get('http://localhost:8080//visualisationjg-webapi/getMenu');
@@ -23,10 +24,12 @@ angular.module("visualjgroups")
                     console.log(results.a.data, results.b.data);
                     $scope.menuList = results.b.data;
                     $scope.member = results.a.data;
+                    listMember = results.a.data;
+                    menuItem = results.b.data;
                      nodess = $scope.member.data.listNode;
-                   logical = nodess[0].logical_name;
-                   addr = nodess[0].bind_addr;
-                    
+                   $scope.logical = nodess[0].logical_name;
+                   $scope.addr = nodess[0].bind_addr;
+                   
                 }
                 , function(errorMsg) {
                     // if any of the previous promises gets rejected
@@ -46,12 +49,12 @@ angular.module("visualjgroups")
                 $scope.mbean = 0;
             });*/
 
- 
+           
         };
              
         $scope.returnMbean = function(){
         	 console.log("drresse ---------- :"+addr);
-         items.getJson('http://localhost:8080//visualisationjg-webapi/getMbean/'+logical+'/'+addr+'/').then(function(result) {
+         items.getJson('http://localhost:8080//visualisationjg-webapi/getMbean/'+$scope.logical+'/'+$scope.addr+'/').then(function(result) {
                $scope.displayTree = result;
                  console.log("*************json******** ",result)
              }, function(result) {
@@ -75,13 +78,16 @@ angular.module("visualjgroups")
             //controllers without waiting 1 second between)
            // console.log("************* ",currentCtrl, currentlyRunning);
             if (currentCtrl === "grapheCtrl" ) {
-                $timeout(function() {
+               $timeout(function() {
+                	var update = 0;
                     $rootScope.myAppMainCtrlRefreshRunning = true;
                     $scope.getData();
-                    $scope.$apply();
+                    
+                    console.log("menu ",menuItem);
+                   $scope.$apply();
                     $scope.intervalFunction();
                     $rootScope.myAppMainCtrlRefreshRunning = false;
-                }, 100000);
+                }, 8000);
            };
         };
         // Kick off the interval

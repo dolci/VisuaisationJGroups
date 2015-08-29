@@ -144,8 +144,11 @@ public class VisualisationService  implements IVisualisationService{
 				 }
 					 
 			}
+			
 			// nodes
 			for(Node n : members){
+				if(n.getCoordinateur().equals("true"))
+					n.setColor("#cc0000");
 				if(n.getViewMaster().size()>0)
 			    	n.getView().addAll(n.getViewMaster());
 				//System.out.println("  views  "+HelperStructure.displayList(n.getView()));
@@ -963,7 +966,7 @@ public class VisualisationService  implements IVisualisationService{
 				rep.getListAllAdr().add(n.getMcast_addr());
 				
 			}
-			rep.getListAllAdr().addAll(listAd);
+			rep.getListAllAdr().addAll(0, listAd);
 			rep.getListName().add("All");
 			listAd.add("All");
 			rep.setRep(listAd);

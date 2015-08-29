@@ -60,3 +60,12 @@
     border:1px solid #94a0b4;
     color:#000
 }
+.node {
+  stroke: #fff;
+  stroke-width: 1.5px;
+}
+
+.link {
+  stroke: #999;
+  stroke-opacity: .6;
+}
