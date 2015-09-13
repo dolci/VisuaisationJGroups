@@ -173,7 +173,7 @@ public class ApplicationModel  implements IVisualisationService{
 	}
 
 	@Override
-      @Scheduled(fixedDelay = 5000)
+      @Scheduled(fixedDelay = 60000)
 	public void scheduledHistory() throws Exception {
 		service.scheduledHistory();
 		

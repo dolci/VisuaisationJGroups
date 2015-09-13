@@ -17,30 +17,32 @@ angular.module("visualjgroups")
             var nodeRadius = 10;
             var selectedNodeRadius = 30;
             var linkDistance = Math.min(width,height)/4;
+            var members ;
             // On récupère les données présentent dans scope.grapheDatas
             // Le $watch a pour but de mettre à jour le graphe dès que les
             // données présentent dans $scope.grapheDatas changent.
             // Ex : suppression ou ajout de noeuds
             $timeout(function(){
              	
-                console.log(" --- ",scope.member);
+              console.log(" --- ",scope.member);
                
                 // use scope.$emit to pass it to controller
                 
             });
-            scope.$watch('member', function (member) {
-
+            scope.$watch('member', function (members) {
+           
             	
         // Find the main graph container.
-            	
+    	
          var graph = d3.select('#nodeGraph');
 
      // Create the SVG container for the visualization and
     // define its dimensions.
 
-var svg = graph.append('svg')
+  var svg = graph.append('svg')
     .attr('width', width)
-    .attr('height', height);
+    .attr('height', height)
+    .attr("id", "svg");
 
 // Select the container for the notes and dimension it.
 
@@ -64,7 +66,6 @@ var positionEdge = function(edge, nodes) {
 };
 
 // Utility function to update the position properties
-// of an arbitrary node that's part of a D3 selection.
 
 var positionNode = function(node) {
     node.attr('transform', function(d) {
@@ -72,17 +73,15 @@ var positionNode = function(node) {
     });
 };
 
-// Utility function to position text associated with
-// a label pseudo-node. The optional third parameter
-// requests transition to the specified fill color.
+
 
 var positionLabelText = function(text, pseudonode, fillColor) {
 
-    // What's the width of the text element?
+    
 
     var textWidth = text.getBBox().width;
 
-    // How far is the pseudo-node from the real one?
+   
 
     var diffX = pseudonode.x - pseudonode.node.x;
     var diffY = pseudonode.y - pseudonode.node.y;
@@ -105,8 +104,8 @@ var positionLabelText = function(text, pseudonode, fillColor) {
 
 
 // Define the data.
-data = member.data.listNode;
-console.log("list node ",data);
+data = members.data.listNode;
+//console.log("list node ",data);
 
 var nodes = data.map(function(entry, idx, list) {
 
@@ -122,8 +121,7 @@ var nodes = data.map(function(entry, idx, list) {
     node.bindAdr = entry.physical_addr;
     node.cluster = entry.cluster_name;
     node.color    = entry.color;
-   console.log("node 09 :",node);
-    node.links = entry.view.slice(0);
+//    node.links = entry.view.slice(0);
 
    
     var radius = 0.4 * Math.min(height,width);
@@ -137,53 +135,22 @@ var nodes = data.map(function(entry, idx, list) {
     return node;
 });
 
-// Identify all the indivual links between nodes on
-// the graph. As noted above, we're using the term
-// "link" to refer to a single connection. As we'll
-// see below, we'll call lines drawn on the graph
-// (which may represent a combination of multiple
-// links) "edges" in a nod to the more mathematically
-// minded.
 
-var links = member.data.listLink;
+var links = members.data.listLink;
 
 
 
-// Now create the edges for our graph. We do that by
-// eliminating duplicates from the links array.
-/*links=[{ link:"SFO",
-    source:0,
-    target:1
-},{link:"SFO",
-source:0,
-target:2},
-{link:"SFO",
-	source:0,
-	target:3},{link:"SFO",
-		source:0,
-		target:4},
-	{link: "GR3",
-		source:1,
-		target:0},{link: "GR3",
-			source:1,
-			target:0},{link: "GR3",
-				source:1,
-				target:4}];*/
-console.log(links);
+
 var edges = [];
 
 // Iterate through the links array.
 
 links.forEach(function(link) {
 
-    // Assume for now that the current link is
-    // unique.
+   
 
     var existingEdge = false;
 
-    // Look through the edges we've collected so
-    // far to see if the current link is already
-    // present.
 
     for (var idx = 0; idx < edges.length; idx++) {
 
@@ -249,12 +216,7 @@ nodeSelection.append('circle')
     .attr('data-node-index', function(d,i) { return i;})
     .style('fill', function(d) {return d.color;})
 
-// Now that we have our main selections (edges and
-// nodes), we can create some subsets of those
-// selections that will be helpful. Those subsets
-// will be tied to individual nodes, so we'll
-// start by iterating through them. We do that
-// in two separate passes.
+
 
 nodeSelection.each(function(node){
 
@@ -375,7 +337,8 @@ var connectionSelection = graph.selectAll('ul.connection')
     .enter()
     .append('ul')
     .classed('connection hidden', true)
-    .attr('data-edge-index', function(d,i) {return i;});
+    .attr('data-edge-index', function(d,i) {return i;})
+    .attr("id","links");
 
 connectionSelection.each(function(connection){
     var selection = d3.select(this);
@@ -521,10 +484,7 @@ var nodeClicked = function(node) {
         // Now add the notes content.
         
         notes.append('h1').text(node.title);
-     /*   notes.append('h3').text("mcast_addr: "+node.subtitle);
-        notes.append('h3').text("mcast_port: "+node.mcastPort);
-        notes.append('h3').text("cluster: "+node.cluster_name);
-        notes.append('h3').text("bind_adr: "+node.physical_addr);*/
+    
         var list = notes.append('ul');
       
         list.append('li').text("mcast_addr: "+node.subtitle);
@@ -533,10 +493,7 @@ var nodeClicked = function(node) {
         list.append('li').text("cluster: "+node.cluster);
         list.append('li').text("bind_adr: "+node.bindAdr);
         
-       /* node.links.forEach(function(link){
-            list.append('li')
-                .text(link);
-        })*/
+   
 
         // With the content in place, transition
         // the opacity to make it visible.
@@ -713,8 +670,11 @@ force.on('tick', function() {
 force.start();
 labelForce.start();
 d3.select("svg")
-.remove(); 
+.remove();
+
+
             });
+           // drawGraph();
             }
             }
          }])

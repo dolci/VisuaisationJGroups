@@ -1,8 +1,8 @@
 
 // contrôleur
 angular.module("visualjgroups")
-    .controller('mainCtrl', ['$scope', '$location','ngDialog','$modal','$http',
-        function ($scope, $location,ngDialog,$modal,$http) {
+    .controller('mainCtrl', ['$scope', '$location','ngDialog','$modal','$http','config',
+        function ($scope, $location,ngDialog,$modal,$http,config) {
      
     	 var protocs = {};
          $scope.items = [];
@@ -37,11 +37,11 @@ angular.module("visualjgroups")
             };
 
             
-            $http.get('http://localhost:8080//visualisationjg-webapi/getAdr') 
+            $http.get(config.urlBase+'/getAdr') 
             .then(function(json) {
               $scope.items = json.data.data.listAllAdr; 
               
-          return $http.get('http://localhost:8080//visualisationjg-webapi/getMbeanPro/'+$scope.items[0]+'/');
+          return $http.get(config.urlBase+'/getMbeanPro/'+$scope.items[0]+'/');
               
             })
           .then(function(json) {
@@ -69,7 +69,7 @@ angular.module("visualjgroups")
                 var  postAddProtocol = {addr:result.addr.item,position:result.position.position,
                 		 protocolName:result.protocolName.proName,protocolTransport:result.protocolTransport.protocol};
                     console.log("result **************************** ",postAddProtocol);
-                    $http.post('http://localhost:8080//visualisationjg-webapi/addProt',postAddProtocol).success(function (data) {
+                    $http.post(config.urlBase+'/addProt',postAddProtocol).success(function (data) {
                     	console.log("rep  "+data.data);
                     	if(data.data == "ok")
                     		alert("The protocol " + result.protocolName.proName+" added");
@@ -102,7 +102,7 @@ angular.module("visualjgroups")
                 	var postDeletePro = {nameProtocol:result.protocol.proName,addr:result.addr.item};
 
                     console.log("result **************************** ",postDeletePro);
-                    $http.post('http://localhost:8080//visualisationjg-webapi/removeProt',postDeletePro).success(function (data) {
+                    $http.post(config.urlBase+'/removeProt',postDeletePro).success(function (data) {
                     	console.log("rep0  "+data.data);
                     	if(data.data == "ok")
                     		alert("Protocol :" + result.protocol.proName+" removed");

@@ -126,7 +126,20 @@ public class VisualisationService  implements IVisualisationService{
 		 * 
 		 */
 		public GrapheProbe createGraph(ArrayList<Node> members) {
-			
+			ArrayList<Node> nodeList = new ArrayList<Node>();
+			if(getAllMemberDB(6).size()>0){
+			for(Member m: getAllMemberDB(6)){
+				 for(Node n : members){
+					 if(m.getLogicalName().equals(n.getLogical_name())){
+						 nodeList.add(n);
+						 members.remove(n);
+						 break;
+						 }
+				 }
+				}
+			nodeList.addAll(members);members.clear();
+			members = nodeList;
+			}
 			TreeMap<String,String> colorList = new TreeMap<String,String>();
 			int index = 0, size1 = members.size();
 			//color group
@@ -204,6 +217,21 @@ public class VisualisationService  implements IVisualisationService{
 		 */
 		public ArrayList<Menu> getMenu(ArrayList<Node> nodess) {
 			
+			
+			ArrayList<Node> nodeList = new ArrayList<Node>();
+			if(getAllMemberDB(6).size()>0){
+			for(Member m: getAllMemberDB(6)){
+				 for(Node n : nodess){
+					 if(m.getLogicalName().equals(n.getLogical_name())){
+						 nodeList.add(n); nodess.remove(n);
+						 break;
+						 }
+				 }
+				}
+			nodeList.addAll(nodess);
+			nodess.clear();
+			nodess = nodeList;
+			}
 			ArrayList<String> listItem = new ArrayList<String>();
 			ArrayList<Menu> listMenu = new ArrayList<Menu>();
 			Menu m  = new Menu();
@@ -619,7 +647,7 @@ public class VisualisationService  implements IVisualisationService{
 		    				 Changement change = new Changement();
 		    				 change.setDiscription("leftMemberGraphe "+m.getLogicalName());change.setGraphe(graphe);
 		    				 changeGraphe = "remove Node "+m.getLogicalName();
-		    				 Thread.sleep(2000);
+		    				 //Thread.sleep(2000);
 		    				 m.setStatus("inactif");
 		    				 addMember(m);
 		    				 addChangement(change);
@@ -673,7 +701,7 @@ public class VisualisationService  implements IVisualisationService{
 		    				 Changement change = new Changement();
 		    				 change.setDiscription("newMemberInGraphe "+memb.getLogicalName());change.setGraphe(graphe);
 		    				 changeGraphe = "new Node "+memb.getLogicalName();
-		    				 Thread.sleep(2000);
+		    				 //Thread.sleep(2000);
 		    				 addChangement(change);
 		    				// System.out.println("************* addd ***************");
 		    			 }

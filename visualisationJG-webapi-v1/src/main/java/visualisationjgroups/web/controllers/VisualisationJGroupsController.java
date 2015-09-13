@@ -153,22 +153,27 @@ public class VisualisationJGroupsController {
 		
 		
 		@RequestMapping(value = "/grapheDate/{dateFrom}/{dateTo}/{heureFrom}/{heureTo}/", method = RequestMethod.GET)
-		public Reponse getGrapheDate(@PathVariable("dateFrom") Date dateFrom,@PathVariable("dateTo") Date dateTo,@PathVariable("heureFrom") String heureFrom,@PathVariable("heureTo") String heureTo,HttpServletResponse response) {
+		public Reponse getGrapheDate(@PathVariable("dateFrom") String dateFrom,@PathVariable("dateTo") String dateTo,@PathVariable("heureFrom") String heureFrom,@PathVariable("heureTo") String heureTo,HttpServletResponse response) {
 			// header CORS
 			visualisationJgroupsCorsController.getCoord(response);
 			// status application
+			
 			if (messages != null) {
 				return new Reponse(-1, messages);
 			}
 			// graph
+			GrapheChangement rep = null;
 			try {
-				GrapheChangement rep = null;
-				rep = application.getGrapheAtDateWithAllChange(dateFrom, dateTo, heureFrom, heureTo);
+				
+				SimpleDateFormat formatter = new SimpleDateFormat("yyyy-mm-dd");
+				Date date1 = formatter.parse(dateFrom);
+				Date date2 = formatter.parse(dateTo);
+				rep = application.getGrapheAtDateWithAllChange(date1, date2, heureFrom, heureTo);
 			} catch (Exception e1) {
 				return new Reponse(1, Static.getErreursForException(e1));
 			}
-			
-				return new Reponse(0, application.getGrapheAtDateWithAllChange(dateFrom, dateTo, heureFrom, heureTo));
+			return new Reponse(0,rep);
+				//return new Reponse(0, application.getGrapheAtDateWithAllChange(date1, date2, heureFrom, heureTo));
 			
 		}
 		

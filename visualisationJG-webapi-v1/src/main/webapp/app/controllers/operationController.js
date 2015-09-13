@@ -1,19 +1,19 @@
 angular.module("visualjgroups")
-    .controller('operationCtrl', ['$scope', '$location','$http','$timeout',
-        function ($scope, $location,$http,$timeout) {
+    .controller('operationCtrl', ['$scope', '$location','$http','$timeout','config',
+        function ($scope, $location,$http,$timeout,config) {
 
             // modèle de la page
             var operation = $scope.operation;
             $scope.showTable = true;
           
           
-             $http.get('http://localhost:8080//visualisationjg-webapi/getAdr') 
+             $http.get(config.urlBase+'/getAdr') 
             .then(function(json) {
               $scope.adr = json.data.data.listName; 
               $scope.adress = json.data.data.rep[0];
              console.log("adresse ",$scope.adr);
               
-          return $http.get('http://localhost:8080//visualisationjg-webapi/getMbeanPro/'+$scope.adress+'/');
+          return $http.get(config.urlBase+'/getMbeanPro/'+$scope.adress+'/');
               
             })
           .then(function(json) {
@@ -43,9 +43,9 @@ angular.module("visualjgroups")
             	    };
             	$scope.invoke = function(){
             		
-            		 console.log('http://localhost:8080//visualisationjg-webapi/invokeMethod/'+$scope.protocolMb.label+'/'+ $scope.methods.nameOp+'/'+$scope.adress+'/');
-            		 console.log($scope.adress == "All");
-            		$http.get('http://localhost:8080//visualisationjg-webapi/invokeMethod/'+$scope.protocolMb.label+'/'+ $scope.methods.nameOp+'/'+$scope.adress+'/').success(function (data) {
+            		// console.log('http://localhost:8080//visualisationjg-webapi/invokeMethod/'+$scope.protocolMb.label+'/'+ $scope.methods.nameOp+'/'+$scope.adress+'/');
+            		// console.log($scope.adress == "All");
+            		$http.get(config.urlBase+'/invokeMethod/'+$scope.protocolMb.label+'/'+ $scope.methods.nameOp+'/'+$scope.adress+'/').success(function (data) {
                    //   console.log("voir adrrese ",'http://localhost:8080//visualisationjg-webapi/invokeMethod/'+$scope.protocolMb.label+'/'+ $scope.methods.nameOp+'/'+$scope.adress+'/');
             			// $scope.showTable = true;
             			var result  = data;

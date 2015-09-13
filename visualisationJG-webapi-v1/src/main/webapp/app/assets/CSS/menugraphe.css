@@ -14,6 +14,13 @@
 a {
     text-decoration: none;
 }
+.textClass {
+            stroke: #323232;
+            font-family: "Lucida Grande", "Droid Sans", Arial, Helvetica, sans-serif;
+            font-weight: normal;
+            stroke-width: .5;
+            font-size: 14px;
+        }
 #notes {
     float: left;
     margin-left:2px;
@@ -42,6 +49,13 @@ ul, ul ul {
 }
 div#nodeGraph svg {
     background-color: white;
+    cursor: move;
+     float: left;
+    position: relative;
+    
+}
+div#historyGraph svg {
+    
     cursor: move;
      float: left;
     position: relative;

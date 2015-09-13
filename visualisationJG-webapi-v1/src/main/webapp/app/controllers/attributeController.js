@@ -1,20 +1,20 @@
 
 angular.module("visualjgroups")
-    .controller('attributeCtrl', ['$scope', '$location','$http','$timeout',
-        function ($scope, $location,$http,$timeout) {
+    .controller('attributeCtrl', ['$scope', '$location','$http','$timeout','config',
+        function ($scope, $location,$http,$timeout,config) {
 
             // modèle de la page
             var operation = $scope.operation;
             $scope.showTable = true;
            var attributes = {} ;
              $scope.listAtt = [];
-             $http.get('http://localhost:8080//visualisationjg-webapi/getAdr') 
+             $http.get(config.urlBase+'/getAdr') 
             .then(function(json) {
               $scope.adr = json.data.data.rep; 
               $scope.adress = $scope.adr[0];
             //  console.log("list adr **** ", $scope.adr);
               
-          return $http.get('http://localhost:8080//visualisationjg-webapi/getMbeanPro/'+$scope.adr[0]+'/');
+          return $http.get(config.urlBase+'/getMbeanPro/'+$scope.adr[0]+'/');
               
             })
           .then(function(json) {
@@ -54,7 +54,7 @@ angular.module("visualjgroups")
             	    };
             	$scope.invoke = function(){
             		
-            		$http.get('http://localhost:8080//visualisationjg-webapi/getAtt/'+$scope.adress+'/'+$scope.protocolMb.label+'/'+$scope.attribute).success(function (data) {
+            		$http.get(config.urlBase+'/getAtt/'+$scope.adress+'/'+$scope.protocolMb.label+'/'+$scope.attribute).success(function (data) {
                    //   console.log("voir adrrese ",'http://localhost:8080//visualisationjg-webapi/invokeMethod/'+$scope.protocolMb.label+'/'+ $scope.methods.nameOp+'/'+$scope.adress+'/');
             			// $scope.showTable = true;
             			var result  = data;

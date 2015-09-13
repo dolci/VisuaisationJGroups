@@ -2,8 +2,8 @@
 // contrôleur
 
 angular.module("visualjgroups")
-  .controller('grapheCtrl', ['$scope','$rootScope','$route','$timeout', '$location','$http','$q','items',
-    function ($scope,$rootScope,$route,$timeout, $location,$http,$q,items) {
+  .controller('grapheCtrl', ['$scope','$rootScope','$route','$timeout', '$location','$http','$q','items','config',
+    function ($scope,$rootScope,$route,$timeout, $location,$http,$q,items,config) {
 
       // modèle de la page
       var graphe = $scope.graphe;
@@ -15,20 +15,22 @@ angular.module("visualjgroups")
         var addr ;
         var listMember,menuItem;
         
+        
+        
+        
         $scope.getData = function(){
-            member = $http.get('http://localhost:8080//visualisationjg-webapi/getGraph');
-            menu = $http.get('http://localhost:8080//visualisationjg-webapi/getMenu');
+            member = $http.get(config.urlBase+'/getGraph',{timeout: 1000});
+            menu = $http.get(config.urlBase+'/getMenu');
 
             $q.all({a: member, b: menu})
                 .then(function(results) {
-                    console.log(results.a.data, results.b.data);
-                    $scope.menuList = results.b.data;
-                    $scope.member = results.a.data;
-                    listMember = results.a.data;
+                  
+                    
+                    listMember = results.a.data; 
                     menuItem = results.b.data;
-                     nodess = $scope.member.data.listNode;
-                   $scope.logical = nodess[0].logical_name;
-                   $scope.addr = nodess[0].bind_addr;
+                   
+                   $scope.logical = listMember.data.listNode[0].logical_name;
+                   $scope.addr = listMember.data.listNode[0].bind_addr;
                    
                 }
                 , function(errorMsg) {
@@ -37,36 +39,24 @@ angular.module("visualjgroups")
                     // the error callback will be called...
                     console.log('An error occurred: ', errorMsg);
                 });
-           
-        //    console.log("logical ------",'http://localhost:8080//visualisationjg-webapi/getMbean/'+logical+'/'+addr+'/');
-         /*  $http.get('http://localhost:8080//visualisationjg-webapi/getMbean/'+ $scope.logical+'/'+ $scope.addr+'/').success(function (data) {
-
-                var mbeans  = data;
-                $scope.mbean = mbeans.data;
-               
-            }).error(function (data) {
-                //
-                $scope.mbean = 0;
-            });*/
-
-           
+                
         };
              
         $scope.returnMbean = function(){
-        	 console.log("drresse ---------- :"+addr);
-         items.getJson('http://localhost:8080//visualisationjg-webapi/getMbean/'+$scope.logical+'/'+$scope.addr+'/').then(function(result) {
+        	 console.log("adresse ---------- :",$scope.logical);
+         items.getJson(config.urlBase+'/getMbean/'+$scope.logical+'/'+$scope.addr+'/').then(function(result) {
                $scope.displayTree = result;
                  console.log("*************json******** ",result)
              }, function(result) {
-                 alert("Error: No data returned", result);
+               //  alert("Error: No data returned", result);
               });
        
         };
-        $scope.selectedNode = "";
-        $scope.returnMbean();
-        $scope.getData();
        
-
+        $scope.selectedNode = "";
+        $scope.getData();
+        $scope.returnMbean();   
+    
 
 
         //
@@ -81,9 +71,12 @@ angular.module("visualjgroups")
                $timeout(function() {
                 	var update = 0;
                     $rootScope.myAppMainCtrlRefreshRunning = true;
-                    $scope.getData();
-                    
-                    console.log("menu ",menuItem);
+                    $scope.getData(); 
+                   if(JSON.stringify($scope.member) !== JSON.stringify(listMember)){
+                	   $scope.member = listMember;
+                       $scope.menuList = menuItem ;
+                   }
+                   
                    $scope.$apply();
                     $scope.intervalFunction();
                     $rootScope.myAppMainCtrlRefreshRunning = false;
@@ -94,23 +87,10 @@ angular.module("visualjgroups")
         $scope.$apply();
         $scope.intervalFunction();
 
-
+      
 
       /*graphe.text = "[Modèle local dans page 1]";
-        graphes = $http.get('http://localhost:8080/pfe/getGraph');
-        menu = $http.get('http://localhost:8080/pfe/getMenu');
-        $q.all({a: graphes, b: menu})
-            .then(function(results) {
-                console.log(results.a.data, results.b.data);
-                $scope.menuList = results.b.data;
-
-            }
-        , function(errorMsg) {
-            // if any of the previous promises gets rejected
-            // the success callback will never be executed
-            // the error callback will be called...
-            console.log('An error occurred: ', errorMsg);
-        });
+       
 
          //  messageNot.send("hello");
 
